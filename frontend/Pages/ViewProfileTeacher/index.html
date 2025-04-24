@@ -1,0 +1,1267 @@
+{% load custom_filters %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Dashboard</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --success: #4cc9f0;
+            --info: #4895ef;
+            --warning: #f72585;
+            --danger: #e63946;
+            --light: #f8f9fa;
+            --dark: #212529;
+        }
+        
+        body {
+            background-color: #f5f7fb;
+            font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .navbar {
+            background-color: var(--primary) !important;
+            box-shadow: 0 2px 10px rgba(67, 97, 238, 0.3);
+        }
+        
+        .sidebar {
+            background-color: white;
+            height: 100vh;
+            position: fixed;
+            width: 250px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+            z-index: 100;
+            padding-top: 70px;
+            transition: all 0.3s;
+        }
+        
+        .sidebar-link {
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            color: #495057;
+            text-decoration: none;
+            transition: all 0.2s;
+            border-radius: 0 20px 20px 0;
+            margin-bottom: 5px;
+        }
+        
+        .sidebar-link:hover, .sidebar-link.active {
+            background-color: rgba(67, 97, 238, 0.1);
+            color: var(--primary);
+        }
+        
+        .sidebar-link i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+        
+        .main-content {
+            margin-left: 250px;
+            padding-top: 70px;
+            padding-bottom: 30px;
+            transition: all 0.3s;
+        }
+        
+        .dashboard-header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            color: white;
+            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.3);
+        }
+        
+        .card {
+            border-radius: 12px;
+            border: none;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s, box-shadow 0.3s;
+            margin-bottom: 25px;
+            height: 100%;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card-header {
+            background-color: white;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--dark);
+            padding: 15px 20px;
+            border-radius: 12px 12px 0 0 !important;
+        }
+        
+        .card-body {
+            padding: 20px;
+        }
+        
+        .stats-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 25px;
+        }
+        
+        .stats-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 1.5rem;
+        }
+        
+        .stats-info h4 {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        
+        .stats-info p {
+            margin-bottom: 0;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+        
+        .upcoming-event {
+            background-color: white;
+            border-left: 4px solid var(--primary);
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 15px;
+            transition: transform 0.2s;
+        }
+        
+        .upcoming-event:hover {
+            transform: translateX(5px);
+        }
+        
+        .notification {
+            background-color: white;
+            border-left: 4px solid var(--success);
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 15px;
+            transition: transform 0.2s;
+        }
+        
+        .notification:hover {
+            transform: translateX(5px);
+        }
+        
+        .chart-container {
+            height: 280px;
+            position: relative;
+        }
+        
+        .progress-circular {
+            position: relative;
+            text-align: center;
+        }
+        
+        .progress-circular canvas {
+            width: 120px;
+            height: 120px;
+        }
+        
+        .progress-circular .progress-value {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+        
+        .timetable-item {
+            background-color: white;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-left: 4px solid var(--primary);
+            display: flex;
+            align-items: center;
+        }
+        
+        .timetable-time {
+            font-weight: 600;
+            color: var(--primary);
+            width: 100px;
+        }
+        
+        .timetable-subject {
+            flex-grow: 1;
+        }
+        
+        .timetable-subject h6 {
+            margin-bottom: 3px;
+        }
+        
+        .timetable-location {
+            width: 80px;
+            text-align: right;
+            color: #6c757d;
+        }
+        
+        .resource-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: white;
+            margin-bottom: 15px;
+            transition: all 0.2s;
+        }
+        
+        .resource-item:hover {
+            background-color: rgba(67, 97, 238, 0.05);
+            transform: translateX(5px);
+        }
+        
+        .resource-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background-color: rgba(67, 97, 238, 0.1);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 1.2rem;
+        }
+        
+        .resource-info {
+            flex-grow: 1;
+        }
+
+        .student-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            border-radius: 8px;
+            background-color: white;
+            margin-bottom: 10px;
+            transition: all 0.2s;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .student-item:hover {
+            background-color: rgba(67, 97, 238, 0.05);
+            transform: translateX(5px);
+        }
+        
+        .student-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 15px;
+            object-fit: cover;
+        }
+        
+        .student-info {
+            flex-grow: 1;
+        }
+        
+        .student-name {
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+        
+        .student-details {
+            font-size: 0.85rem;
+            color: #6c757d;
+        }
+        
+        .student-points {
+            font-weight: 600;
+            color: var(--primary);
+        }
+        
+        .behavior-badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .behavior-positive {
+            background-color: rgba(76, 201, 240, 0.1);
+            color: #4cc9f0;
+        }
+        
+        .behavior-negative {
+            background-color: rgba(247, 37, 133, 0.1);
+            color: #f72585;
+        }
+
+        /* Mobile responsive */
+        @media (max-width: 991.98px) {
+            .sidebar {
+                width: 70px;
+                padding-top: 60px;
+            }
+            
+            .sidebar-link span {
+                display: none;
+            }
+            
+            .sidebar-link i {
+                margin-right: 0;
+                font-size: 1.2rem;
+            }
+            
+            .main-content {
+                margin-left: 70px;
+            }
+        }
+        
+        @media (max-width: 767.98px) {
+            .sidebar {
+                width: 0;
+                padding-top: 60px;
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+        }
+        
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        
+        .badge {
+            padding: 6px 10px;
+            border-radius: 30px;
+            font-weight: 500;
+        }
+        
+        .action-btn {
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn-award {
+            background-color: rgba(76, 201, 240, 0.1);
+            color: #4cc9f0;
+        }
+        
+        .btn-award:hover {
+            background-color: rgba(76, 201, 240, 0.2);
+        }
+        
+        .btn-deduct {
+            background-color: rgba(247, 37, 133, 0.1);
+            color: #f72585;
+        }
+        
+        .btn-deduct:hover {
+            background-color: rgba(247, 37, 133, 0.2);
+        }
+        
+        /* Modal styles */
+        .modal-content {
+            border-radius: 12px;
+            border: none;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .modal-header {
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            padding: 15px 20px;
+        }
+        
+        .modal-title {
+            font-weight: 600;
+        }
+        
+        .modal-body {
+            padding: 20px;
+        }
+        
+        .modal-footer {
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+            padding: 15px 20px;
+        }
+        
+        .form-label {
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+        
+        .form-control {
+            border-radius: 8px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            padding: 10px 15px;
+        }
+        
+        .form-control:focus {
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+            border-color: var(--primary);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold" href="#">
+                <i class="fas fa-graduation-cap me-2"></i> LearningHub
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="notificationDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-bell"></i>
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                5
+                            </span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationDropdown">
+                            <li><a class="dropdown-item" href="#">New behavior report submitted</a></li>
+                            <li><a class="dropdown-item" href="#">Parent meeting request</a></li>
+                            <li><a class="dropdown-item" href="#">Staff meeting reminder</a></li>
+                            <li><a class="dropdown-item" href="#">Seating plan updated</a></li>
+                            <li><a class="dropdown-item" href="#">Grade submission deadline</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <img src="https://via.placeholder.com/40" class="avatar me-2" alt="Profile">
+                            <span>{{ request.user.get_full_name|default:request.user.username }}</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                            <li><a class="dropdown-item" href="/teacher-profile"><i class="fas fa-user me-2"></i> Profile</a></li>
+                            <li><a class="dropdown-item" href="/teacher-settings"><i class="fas fa-cog me-2"></i> Settings</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="/logout"><i class="fas fa-sign-out-alt me-2"></i> Logout</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+
+        <a href="#" class="sidebar-link active">
+            <i class="fas fa-user"></i>
+            <span>Profile</span>
+        </a>
+        <a href="/seating-plan" class="sidebar-link">
+            <i class="fas fa-th"></i>
+            <span>Seating Plan</span>
+        </a>
+ 
+
+        <a href="/teacher-settings" class="sidebar-link">
+            <i class="fas fa-cog"></i>
+            <span>Settings</span>
+        </a>
+        <a href="/teacher-faq" class="sidebar-link">
+            <i class="fas fa-question-circle"></i>
+            <span>Help & FAQ</span>
+        </a>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="container-fluid px-4">
+            <!-- Dashboard Header -->
+            <div class="dashboard-header">
+                <h1 class="fw-bold">Welcome, {{ request.user.get_full_name|default:request.user.username }}!</h1>
+                <p class="mb-0">Manage your classes, track student behavior, and organize your teaching resources</p>
+            </div>
+
+            <!-- Add this right after the dashboard header to display messages -->
+            {% if messages %}
+            <div class="container-fluid px-4 mb-4">
+                {% for message in messages %}
+                <div class="alert alert-{% if message.tags == 'error' %}danger{% elif message.tags == 'success' %}success{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- Quick Stats Row -->
+            <div class="row">
+                <div class="col-xl-3 col-md-6">
+                    <div class="stats-card">
+                        <div class="stats-icon bg-primary-light" style="background-color: rgba(67, 97, 238, 0.1); color: #4361ee;">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stats-info">
+                            <h4>{{ total_students }}</h4>
+                            <p>Total Students</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-6">
+                    <div class="stats-card">
+                        <div class="stats-icon" style="background-color: rgba(76, 201, 240, 0.1); color: #4cc9f0;">
+                            <i class="fas fa-chalkboard-teacher"></i>
+                        </div>
+                        <div class="stats-info">
+                            <h4>{{ classrooms|length }}</h4>
+                            <p>Active Classes</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-6">
+                    <div class="stats-card">
+                        <div class="stats-icon" style="background-color: rgba(247, 37, 133, 0.1); color: #f72585;">
+                            <i class="fas fa-clipboard-check"></i>
+                        </div>
+                        <div class="stats-info">
+                            <h4>{{ pending_assessments }}</h4>
+                            <p>Pending Assessments</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-6">
+                    <div class="stats-card">
+                        <div class="stats-icon" style="background-color: rgba(72, 149, 239, 0.1); color: #4895ef;">
+                            <i class="fas fa-award"></i>
+                        </div>
+                        <div class="stats-info">
+                            <h4>{{ average_behavior_score }}%</h4>
+                            <p>Average Behavior Score</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <!-- Class Performance Card -->
+                <div class="col-lg-8">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <div>Class Performance</div>
+                            <div class="dropdown">
+                                <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                    This Semester
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="#">Last Semester</a></li>
+                                    <li><a class="dropdown-item" href="#">This Year</a></li>
+                                    <li><a class="dropdown-item" href="#">All Time</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-container">
+                                <canvas id="performanceChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Behavior Distribution Chart -->
+                <div class="col-lg-4">
+                    <div class="card">
+                        <div class="card-header">Behavior Distribution</div>
+                        <div class="card-body">
+                            <div class="text-center mb-3">
+                                <div class="progress-circular mx-auto">
+                                    <canvas id="behaviorChart" width="120" height="120"></canvas>
+                                    <div class="progress-value">
+                                        {{ average_behavior_score }}%
+                                    </div>
+                                </div>
+                                <div class="mt-3">
+                                    <h6 class="mb-1 text-center">Average Behavior Score</h6>
+                                    <p class="text-muted small">Last updated: {% now "F j, Y" %}</p>
+                                </div>
+                            </div>
+                            <div class="row text-center mt-4">
+                                <div class="col-4">
+                                    <h4 class="mb-1 text-success">72</h4>
+                                    <p class="text-muted small mb-0">Excellent</p>
+                                </div>
+                                <div class="col-4">
+                                    <h4 class="mb-1 text-warning">43</h4>
+                                    <p class="text-muted small mb-0">Average</p>
+                                </div>
+                                <div class="col-4">
+                                    <h4 class="mb-1 text-danger">12</h4>
+                                    <p class="text-muted small mb-0">Needs Improvement</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <!-- Today's Schedule -->
+                <div class="col-lg-8">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <div>Today's Schedule</div>
+                            <div>
+                                <span class="badge bg-primary">{% now "l, F j" %}</span>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            {% for classroom in classrooms|slice:":6" %}
+                            <div class="timetable-item" {% if forloop.counter > 1 %}style="border-left-color: {{ forloop.counter|get_color }}"{% endif %}>
+                                <div class="timetable-time">
+                                    {% with hour=forloop.counter|add:7 %}
+                                        {{ hour }}:30 - {{ hour|add:1 }}:30
+                                    {% endwith %}
+                                </div>
+                                <div class="timetable-subject">
+                                    <h6>{{ classroom.name }}</h6>
+                                    <small class="text-muted">
+                                        {% if classroom.subject %}
+                                            {{ classroom.subject.name }} • {{ classroom.rows }} x {{ classroom.columns }} Seating
+                                        {% else %}
+                                            {{ classroom.rows }} x {{ classroom.columns }} Seating
+                                        {% endif %}
+                                    </small>
+                                </div>
+                                <div class="timetable-location">
+                                    <a href="/seating-plan?classroom={{ classroom.id }}" class="btn btn-sm btn-outline-primary">View Plan</a>
+                                </div>
+                            </div>
+                            {% empty %}
+                            <div class="text-center py-4">
+                                <p class="text-muted">No classes scheduled for today</p>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4">
+                    <!-- Recent Behavior Records -->
+                    <div class="card mb-4">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <div>Recent Behavior Records</div>
+                            <a href="/behaviour-history" class="text-decoration-none small">View All</a>
+                        </div>
+                        <div class="card-body">
+                            {% for behavior in recent_behaviors %}
+                            <div class="upcoming-event">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="behavior-badge {% if behavior.points > 0 %}behavior-positive{% else %}behavior-negative{% endif %}">
+                                        {% if behavior.points > 0 %}+{% endif %}{{ behavior.points }} Points
+                                    </span>
+                                    <small class="text-muted">{{ behavior.recorded_at }}</small>
+                                </div>
+                                <h6 class="mb-1">{{ behavior.student.user.get_full_name }}</h6>
+                                <p class="mb-0 small text-muted">{{ behavior.description }}</p>
+                            </div>
+                            {% empty %}
+                            <div class="text-center py-4">
+                                <p class="text-muted">No recent behavior records</p>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    
+                    <!-- Notifications -->
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <div>Notifications</div>
+                            <a href="#" class="text-decoration-none small">View All</a>
+                        </div>
+                        <div class="card-body">
+                            <div class="notification">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-bullhorn me-3" style="color: #4cc9f0; font-size: 1.2rem;"></i>
+                                    <div>
+                                        <h6 class="mb-1">Staff Meeting</h6>
+                                        <p class="mb-0 small text-muted">Today - 11:00 AM</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="notification">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-users me-3" style="color: #4895ef; font-size: 1.2rem;"></i>
+                                    <div>
+                                        <h6 class="mb-1">Parent-Teacher Conference</h6>
+                                        <p class="mb-0 small text-muted">{% now "F j, Y" %} - 4:00 PM</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="notification">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-clipboard-list me-3" style="color: #f72585; font-size: 1.2rem;"></i>
+                                    <div>
+                                        <h6 class="mb-1">Grade Submission Deadline</h6>
+                                        <p class="mb-0 small text-muted">{% now "F j, Y" %} - End of Day</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <!-- Student List -->
+                <div class="col-lg-8">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <div>Students Requiring Attention</div>
+                            <div class="dropdown">
+                                <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                    All Classes
+                                </button>
+                                <ul class="dropdown-menu">
+                                    {% for classroom in classrooms %}
+                                    <li><a class="dropdown-item" href="#">{{ classroom.name }}</a></li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            {% for student in students_requiring_attention %}
+                            <div class="student-item" {% if forloop.counter > 1 %}style="border-left-color: {{ forloop.counter|get_color }}"{% endif %}>
+                                <img src="https://via.placeholder.com/40" alt="Student" class="student-avatar">
+                                <div class="student-info">
+                                    <div class="student-name">{{ student.name }}</div>
+                                    <div class="student-details">{{ student.class }} • Behavior Score: {{ student.behavior_score }}%</div>
+                                </div>
+                                <div class="student-points">{{ student.points }} pts</div>
+                                <div class="ms-3 d-flex gap-2">
+                                    <button class="action-btn btn-award" onclick="awardPoints({{ student.id }})">
+                                        <i class="fas fa-plus-circle"></i> Award
+                                    </button>
+                                    <button class="action-btn btn-deduct" onclick="deductPoints({{ student.id }})">
+                                        <i class="fas fa-minus-circle"></i> Deduct
+                                    </button>
+                                </div>
+                            </div>
+                            {% empty %}
+                            <div class="text-center py-4">
+                                <p class="text-muted">No students requiring attention at this time</p>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Subject Performance -->
+                <div class="col-lg-4">
+                    <div class="card">
+                        <div class="card-header">Class Comparison</div>
+                        <div class="card-body">
+                            <div class="chart-container">
+                                <canvas id="classComparisonChart"></canvas>
+                            </div>
+                            <div class="mt-3">
+                                {% for classroom, score in class_behavior_scores.items %}
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <div class="d-flex align-items-center">
+                                        <span class="badge {% if forloop.first %}bg-primary{% else %}me-2{% endif %}" 
+                                              {% if not forloop.first %}style="background-color: {{ forloop.counter|get_color }};"{% endif %}>&nbsp;</span>
+                                        <small>{{ classroom }}</small>
+                                    </div>
+                                    <small class="fw-bold">{{ score }}%</small>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Teaching Resources Row -->
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <div>Teaching Resources</div>
+                            <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addResourceModal">
+                                <i class="fas fa-plus"></i> Add New
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="resource-item">
+                                        <div class="resource-icon">
+                                            <i class="fas fa-file-pdf"></i>
+                                        </div>
+                                        <div class="resource-info">
+                                            <h6 class="mb-1">Lesson Plans</h6>
+                                            <p class="mb-0 small text-muted">Weekly curriculum materials</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="resource-item">
+                                        <div class="resource-icon">
+                                            <i class="fas fa-tasks"></i>
+                                        </div>
+                                        <div class="resource-info">
+                                            <h6 class="mb-1">Assessment Templates</h6>
+                                            <p class="mb-0 small text-muted">Quizzes and tests</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="resource-item">
+                                        <div class="resource-icon">
+                                            <i class="fas fa-video"></i>
+                                        </div>
+                                        <div class="resource-info">
+                                            <h6 class="mb-1">Educational Videos</h6>
+                                            <p class="mb-0 small text-muted">Supplementary materials</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="resource-item">
+                                        <div class="resource-icon">
+                                            <i class="fas fa-chart-pie"></i>
+                                        </div>
+                                        <div class="resource-info">
+                                            <h6 class="mb-1">Analytics Tools</h6>
+                                            <p class="mb-0 small text-muted">Performance tracking</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Award Points Modal -->
+    <div class="modal fade" id="awardPointsModal" tabindex="-1" aria-labelledby="awardPointsModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="awardPointsModalLabel">Award Behavior Points</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                
+                
+                <form id="awardPointsForm" method="post" action="{% url 'award_points' %}">
+                    {% csrf_token %}
+                    <div class="modal-body">
+                        <input type="hidden" id="award_student_id" name="student_id">
+                        <input type="hidden" id="award_classroom_id" name="classroom_id">
+                        
+                        <div class="mb-3">
+                            <label for="award_points" class="form-label">Points to Award</label>
+                            <input type="number" class="form-control" id="award_points" name="points" value="1" min="1" max="10">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="award_reason" class="form-label">Reason</label>
+                            <select class="form-select" id="award_reason" name="reason">
+                                <option value="Excellent participation">Excellent participation</option>
+                                <option value="Helping others">Helping others</option>
+                                <option value="Outstanding work">Outstanding work</option>
+                                <option value="Good behavior">Good behavior</option>
+                                <option value="Other">Other (specify below)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="award_custom_reason" class="form-label">Custom Reason (if "Other" selected)</label>
+                            <textarea class="form-control" id="award_custom_reason" name="custom_reason" rows="2"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Award Points</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Deduct Points Modal -->
+    <div class="modal fade" id="deductPointsModal" tabindex="-1" aria-labelledby="deductPointsModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deductPointsModalLabel">Deduct Behavior Points</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                
+                <form id="deductPointsForm" method="post" action="{% url 'deduct_points' %}">
+                    {% csrf_token %}
+                    <div class="modal-body">
+                        <input type="hidden" id="deduct_student_id" name="student_id">
+                        <input type="hidden" id="deduct_classroom_id" name="classroom_id">
+                        
+                        <div class="mb-3">
+                            <label for="deduct_points" class="form-label">Points to Deduct</label>
+                            <input type="number" class="form-control" id="deduct_points" name="points" value="1" min="1" max="10">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="deduct_reason" class="form-label">Reason</label>
+                            <select class="form-select" id="deduct_reason" name="reason">
+                                <option value="Disruptive behavior">Disruptive behavior</option>
+                                <option value="Incomplete work">Incomplete work</option>
+                                <option value="Late to class">Late to class</option>
+                                <option value="Not following instructions">Not following instructions</option>
+                                <option value="Other">Other (specify below)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="deduct_custom_reason" class="form-label">Custom Reason (if "Other" selected)</label>
+                            <textarea class="form-control" id="deduct_custom_reason" name="custom_reason" rows="2"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Deduct Points</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Resource Modal -->
+    <div class="modal fade" id="addResourceModal" tabindex="-1" aria-labelledby="addResourceModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addResourceModalLabel">Add Teaching Resource</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="addResourceForm">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="resource_title" class="form-label">Resource Title</label>
+                            <input type="text" class="form-control" id="resource_title" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="resource_type" class="form-label">Resource Type</label>
+                            <select class="form-select" id="resource_type">
+                                <option value="document">Document</option>
+                                <option value="video">Video</option>
+                                <option value="assessment">Assessment</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="resource_description" class="form-label">Description</label>
+                            <textarea class="form-control" id="resource_description" rows="3"></textarea>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="resource_file" class="form-label">Upload File (optional)</label>
+                            <input type="file" class="form-control" id="resource_file">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-primary" onclick="addResource()">Add Resource</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="mt-5 py-4 bg-white border-top">
+        <div class="container text-center">
+            <p class="text-muted mb-0">© {% now "Y" %} LearningHub School Management System. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Chart Initialization Scripts -->
+    <script>
+        // Performance Chart
+        const performanceCtx = document.getElementById('performanceChart').getContext('2d');
+        const performanceChart = new Chart(performanceCtx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'],
+                datasets: [
+                    {% for item in chart_data %}
+                    {
+                        label: '{{ item.name }}',
+                        data: [
+                            {% for point in item.data %}
+                            {{ point }},
+                            {% endfor %}
+                        ],
+                        borderColor: '{{ item.color|get_color }}',
+                        backgroundColor: '{{ item.color|get_rgba }}',
+                        fill: false,
+                        tension: 0.4,
+                        pointBackgroundColor: '{{ item.color|get_color }}',
+                        pointBorderColor: '#fff',
+                        pointRadius: 4,
+                        pointHoverRadius: 6
+                    }{% if not forloop.last %},{% endif %}
+                    {% endfor %}
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        align: 'end',
+                        labels: {
+                            boxWidth: 12,
+                            padding: 20
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                        padding: 12,
+                        usePointStyle: true
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        min: 70,
+                        max: 100,
+                        ticks: {
+                            stepSize: 5
+                        },
+                        grid: {
+                            borderDash: [2, 2]
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                },
+                elements: {
+                    line: {
+                        borderWidth: 2
+                    }
+                }
+            }
+        });
+
+        // Behavior Chart (Doughnut)
+        const behaviorCtx = document.getElementById('behaviorChart').getContext('2d');
+        const behaviorChart = new Chart(behaviorCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Excellent', 'Average', 'Needs Improvement'],
+                datasets: [{
+                    data: [72, 43, 12],
+                    backgroundColor: ['#4caf50', '#ffc107', '#f44336'],
+                    borderWidth: 0,
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                cutout: '75%',
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                        padding: 12,
+                        usePointStyle: true
+                    }
+                }
+            }
+        });
+
+        // Class Comparison Chart (Radar)
+        const classComparisonCtx = document.getElementById('classComparisonChart').getContext('2d');
+        const classComparisonChart = new Chart(classComparisonCtx, {
+            type: 'radar',
+            data: {
+                labels: ['Behavior', 'Attendance', 'Participation', 'Homework', 'Test Scores'],
+                datasets: [
+                    {% for item in radar_data %}
+                    {
+                        label: '{{ item.name }}',
+                        data: [
+                            {% for point in item.data %}
+                            {{ point }},
+                            {% endfor %}
+                        ],
+                        borderColor: '{{ item.color|get_color }}',
+                        borderWidth: 2,
+                        pointBackgroundColor: '{{ item.color|get_color }}',
+                        pointBorderColor: '#fff',
+                        pointHoverRadius: 6
+                    }{% if not forloop.last %},{% endif %}
+                    {% endfor %}
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    r: {
+                        beginAtZero: true,
+                        max: 100,
+                        ticks: {
+                            display: false,
+                            stepSize: 20
+                        },
+                        pointLabels: {
+                            font: {
+                                size: 11
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        align: 'end',
+                        labels: {
+                            boxWidth: 12,
+                            padding: 20
+                        }
+                    }
+                }
+            }
+        });
+
+        // Mobile sidebar toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            const navbarToggler = document.querySelector('.navbar-toggler');
+            const sidebar = document.querySelector('.sidebar');
+            const mainContent = document.querySelector('.main-content');
+            
+            if (navbarToggler) {
+                navbarToggler.addEventListener('click', function() {
+                    if (window.innerWidth < 768) {
+                        if (sidebar.style.width === '250px') {
+                            sidebar.style.width = '0';
+                            mainContent.style.marginLeft = '0';
+                        } else {
+                            sidebar.style.width = '250px';
+                            mainContent.style.marginLeft = '0';
+                        }
+                    }
+                });
+            }
+            
+            // Handle window resize
+            window.addEventListener('resize', function() {
+                if (window.innerWidth >= 768) {
+                    sidebar.style.width = '';
+                    mainContent.style.marginLeft = '';
+                }
+            });
+        });
+
+        // Award and Deduct Points Functions
+        function awardPoints(studentId) {
+            // Set the student ID in the modal form
+            document.getElementById('award_student_id').value = studentId;
+            document.getElementById('award_classroom_id').value = '{{ classrooms.0.id|default:"1" }}';
+            
+            // Show the modal
+            var awardModal = new bootstrap.Modal(document.getElementById('awardPointsModal'));
+            awardModal.show();
+        }
+
+        function deductPoints(studentId) {
+            // Set the student ID in the modal form
+            document.getElementById('deduct_student_id').value = studentId;
+            document.getElementById('deduct_classroom_id').value = '{{ classrooms.0.id|default:"1" }}';
+            
+            // Show the modal
+            var deductModal = new bootstrap.Modal(document.getElementById('deductPointsModal'));
+            deductModal.show();
+        }
+
+        // Add Resource Function
+        function addResource() {
+            // Get form values
+            const title = document.getElementById('resource_title').value;
+            const type = document.getElementById('resource_type').value;
+            const description = document.getElementById('resource_description').value;
+            const fileInput = document.getElementById('resource_file');
+            
+            // In a real implementation, this would upload the file and save the resource
+            // For demo purposes, we'll just show a success message and close the modal
+            
+            // Create a new resource item in the UI
+            const resourcesContainer = document.querySelector('.row .resource-item').parentNode.parentNode;
+            
+            // Create the HTML for the new resource
+            const newResourceHTML = `
+                <div class="col-md-3">
+                    <div class="resource-item">
+                        <div class="resource-icon">
+                            <i class="fas fa-${type === 'video' ? 'video' : type === 'assessment' ? 'tasks' : 'file-alt'}"></i>
+                        </div>
+                        <div class="resource-info">
+                            <h6 class="mb-1">${title}</h6>
+                            <p class="mb-0 small text-muted">${description}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Add the new resource to the container
+            resourcesContainer.insertAdjacentHTML('beforeend', newResourceHTML);
+            
+            // Show success message
+            alert('Resource added successfully!');
+            
+            // Close the modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('addResourceModal'));
+            modal.hide();
+            
+            // Reset the form
+            document.getElementById('addResourceForm').reset();
+        }
+    </script>
+</body>
+</html>

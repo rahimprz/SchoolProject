@@ -1,0 +1,873 @@
+{% load static %}
+{% load custom_filters %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Settings - LearningHub</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --success: #4cc9f0;
+            --info: #4895ef;
+            --warning: #f72585;
+            --danger: #e63946;
+            --light: #f8f9fa;
+            --dark: #212529;
+        }
+        
+        body {
+            background-color: #f5f7fb;
+            font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .navbar {
+            background-color: var(--primary) !important;
+            box-shadow: 0 2px 10px rgba(67, 97, 238, 0.3);
+        }
+        
+        .sidebar {
+            background-color: white;
+            height: 100vh;
+            position: fixed;
+            width: 250px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+            z-index: 100;
+            padding-top: 70px;
+            transition: all 0.3s;
+        }
+        
+        .sidebar-link {
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            color: #495057;
+            text-decoration: none;
+            transition: all 0.2s;
+            border-radius: 0 20px 20px 0;
+            margin-bottom: 5px;
+        }
+        
+        .sidebar-link:hover, .sidebar-link.active {
+            background-color: rgba(67, 97, 238, 0.1);
+            color: var(--primary);
+        }
+        
+        .sidebar-link i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+        
+        .main-content {
+            margin-left: 250px;
+            padding-top: 70px;
+            padding-bottom: 30px;
+            transition: all 0.3s;
+        }
+        
+        .settings-header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            color: white;
+            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.3);
+        }
+        
+        .card {
+            border-radius: 12px;
+            border: none;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s, box-shadow 0.3s;
+            margin-bottom: 25px;
+        }
+        
+        .card:hover {
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card-header {
+            background-color: white;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--dark);
+            padding: 15px 20px;
+            border-radius: 12px 12px 0 0 !important;
+        }
+        
+        .card-body {
+            padding: 20px;
+        }
+        
+        .nav-tabs {
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        
+        .nav-tabs .nav-link {
+            border: none;
+            color: #6c757d;
+            padding: 10px 15px;
+            font-weight: 500;
+            border-radius: 0;
+            margin-right: 10px;
+            transition: all 0.2s;
+        }
+        
+        .nav-tabs .nav-link:hover {
+            color: var(--primary);
+            background-color: rgba(67, 97, 238, 0.05);
+        }
+        
+        .nav-tabs .nav-link.active {
+            color: var(--primary);
+            border-bottom: 2px solid var(--primary);
+            background-color: transparent;
+        }
+        
+        .form-label {
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+        
+        .form-control {
+            border-radius: 8px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            padding: 10px 15px;
+        }
+        
+        .form-control:focus {
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+            border-color: var(--primary);
+        }
+        
+        .form-check-input:checked {
+            background-color: var(--primary);
+            border-color: var(--primary);
+        }
+        
+        .form-check-input:focus {
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+            border-color: var(--primary);
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            border-color: var(--primary);
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--secondary);
+            border-color: var(--secondary);
+        }
+        
+        .profile-picture {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid white;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .profile-picture-container {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+        
+        .profile-picture-edit {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background-color: var(--primary);
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        
+        .profile-picture-edit:hover {
+            background-color: var(--secondary);
+        }
+        
+        /* Mobile responsive */
+        @media (max-width: 991.98px) {
+            .sidebar {
+                width: 70px;
+                padding-top: 60px;
+            }
+            
+            .sidebar-link span {
+                display: none;
+            }
+            
+            .sidebar-link i {
+                margin-right: 0;
+                font-size: 1.2rem;
+            }
+            
+            .main-content {
+                margin-left: 70px;
+            }
+        }
+        
+        @media (max-width: 767.98px) {
+            .sidebar {
+                width: 0;
+                padding-top: 60px;
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+        }
+        
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        
+        .theme-option {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .theme-preview {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            margin-right: 10px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        
+        .theme-light {
+            background-color: #f8f9fa;
+        }
+        
+        .theme-dark {
+            background-color: #212529;
+        }
+        
+        .theme-system {
+            background: linear-gradient(135deg, #f8f9fa 50%, #212529 50%);
+        }
+        
+        .layout-option {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .layout-preview {
+            width: 60px;
+            height: 40px;
+            border-radius: 8px;
+            margin-right: 10px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .layout-default .layout-sidebar {
+            width: 20%;
+            height: 100%;
+            background-color: #e9ecef;
+        }
+        
+        .layout-compact .layout-sidebar {
+            width: 15%;
+            height: 100%;
+            background-color: #e9ecef;
+        }
+        
+        .layout-expanded .layout-sidebar {
+            width: 25%;
+            height: 100%;
+            background-color: #e9ecef;
+        }
+        
+        .layout-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 2px;
+        }
+        
+        .layout-header {
+            height: 5px;
+            background-color: #adb5bd;
+            margin-bottom: 2px;
+        }
+        
+        .layout-body {
+            flex: 1;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2px;
+        }
+        
+        .layout-box {
+            height: 5px;
+            background-color: #dee2e6;
+            flex-basis: calc(50% - 1px);
+        }
+        
+        .alert-container {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            z-index: 1050;
+            max-width: 350px;
+        }
+        
+        .alert {
+            margin-bottom: 10px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold" href="#">
+                <i class="fas fa-graduation-cap me-2"></i> LearningHub
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="notificationDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-bell"></i>
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                5
+                            </span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationDropdown">
+                            <li><a class="dropdown-item" href="#">New behavior report submitted</a></li>
+                            <li><a class="dropdown-item" href="#">Parent meeting request</a></li>
+                            <li><a class="dropdown-item" href="#">Staff meeting reminder</a></li>
+                            <li><a class="dropdown-item" href="#">Seating plan updated</a></li>
+                            <li><a class="dropdown-item" href="#">Grade submission deadline</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <img src="https://via.placeholder.com/40" class="avatar me-2" alt="Profile">
+                            <span>{{ request.user.get_full_name|default:request.user.username }}</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                            <li><a class="dropdown-item" href="/teacher-profile"><i class="fas fa-user me-2"></i> Profile</a></li>
+                            <li><a class="dropdown-item" href="/teacher-settings"><i class="fas fa-cog me-2"></i> Settings</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="/logout"><i class="fas fa-sign-out-alt me-2"></i> Logout</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <a href="/teacher-profile" class="sidebar-link">
+            <i class="fas fa-user"></i>
+            <span>Profile</span>
+        </a>
+        <a href="/seating-plan" class="sidebar-link">
+            <i class="fas fa-th"></i>
+            <span>Seating Plan</span>
+        </a>
+  
+        <a href="#" class="sidebar-link active">
+            <i class="fas fa-cog"></i>
+            <span>Settings</span>
+        </a>
+        <a href="/teacher-faq/" class="sidebar-link">
+            <i class="fas fa-question-circle"></i>
+            <span>Help & FAQ</span>
+        </a>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="container-fluid px-4">
+            <!-- Alert Container for Messages -->
+            <div class="alert-container">
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{% if message.tags == 'error' %}danger{% elif message.tags == 'success' %}success{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            
+            <!-- Settings Header -->
+            <div class="settings-header">
+                <h1 class="fw-bold">Settings</h1>
+                <p class="mb-0">Manage your account settings and preferences</p>
+            </div>
+
+            <!-- Settings Content -->
+            <div class="card">
+                <div class="card-body">
+                    <ul class="nav nav-tabs" id="settingsTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link {% if active_tab == 'profile' or not active_tab %}active{% endif %}" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="{% if active_tab == 'profile' or not active_tab %}true{% else %}false{% endif %}">
+                                <i class="fas fa-user me-2"></i>Profile
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link {% if active_tab == 'notification' %}active{% endif %}" id="notification-tab" data-bs-toggle="tab" data-bs-target="#notification" type="button" role="tab" aria-controls="notification" aria-selected="{% if active_tab == 'notification' %}true{% else %}false{% endif %}">
+                                <i class="fas fa-bell me-2"></i>Notifications
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link {% if active_tab == 'display' %}active{% endif %}" id="display-tab" data-bs-toggle="tab" data-bs-target="#display" type="button" role="tab" aria-controls="display" aria-selected="{% if active_tab == 'display' %}true{% else %}false{% endif %}">
+                                <i class="fas fa-desktop me-2"></i>Display
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link {% if active_tab == 'password' %}active{% endif %}" id="password-tab" data-bs-toggle="tab" data-bs-target="#password" type="button" role="tab" aria-controls="password" aria-selected="{% if active_tab == 'password' %}true{% else %}false{% endif %}">
+                                <i class="fas fa-lock me-2"></i>Password
+                            </button>
+                        </li>
+                    </ul>
+                    
+                    <div class="tab-content" id="settingsTabsContent">
+                        <!-- Profile Tab -->
+                        <div class="tab-pane fade {% if active_tab == 'profile' or not active_tab %}show active{% endif %}" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                            <div class="row">
+                                <div class="col-md-3 text-center">
+                                    <div class="profile-picture-container">
+                                        <img src="https://via.placeholder.com/100" alt="Profile Picture" class="profile-picture">
+                                        <div class="profile-picture-edit" title="Change Profile Picture">
+                                            <i class="fas fa-camera"></i>
+                                        </div>
+                                    </div>
+                                    <h5 class="mb-1">{{ request.user.get_full_name|default:request.user.username }}</h5>
+                                    <p class="text-muted">{{ teacher.department|default:"Teacher" }}</p>
+                                </div>
+                                <div class="col-md-9">
+                                    <form method="post" enctype="multipart/form-data">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="form_type" value="profile">
+                                        
+                                        <div class="row mb-3">
+                                            <div class="col-md-6">
+                                                <label for="id_first_name" class="form-label">First Name</label>
+                                                <input type="text" name="first_name" value="{{ request.user.first_name }}" class="form-control" id="id_first_name" required>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label for="id_last_name" class="form-label">Last Name</label>
+                                                <input type="text" name="last_name" value="{{ request.user.last_name }}" class="form-control" id="id_last_name" required>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <label for="id_email" class="form-label">Email Address</label>
+                                            <input type="email" name="email" value="{{ request.user.email }}" class="form-control" id="id_email" required>
+                                        </div>
+                                        
+                                        <div class="row mb-3">
+                                            <div class="col-md-6">
+                                                <label for="id_department" class="form-label">Department</label>
+                                                <input type="text" name="department" value="{{ teacher.department|default:'' }}" class="form-control" id="id_department">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label for="id_years_experience" class="form-label">Years of Experience</label>
+                                                <input type="number" name="years_experience" value="{{ teacher.years_experience|default:0 }}" class="form-control" id="id_years_experience" min="0">
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <label for="id_office" class="form-label">Office Location</label>
+                                            <input type="text" name="office" value="{{ teacher.office|default:'' }}" class="form-control" id="id_office" placeholder="e.g., Room 201">
+                                        </div>
+                                        
+                                        <div class="row mb-3">
+                                            <div class="col-md-6">
+                                                <label for="id_office_hours" class="form-label">Office Hours</label>
+                                                <input type="text" name="office_hours" value="{{ teacher.office_hours|default:'' }}" class="form-control" id="id_office_hours" placeholder="e.g., Mon-Fri: 9:00 AM - 5:00 PM">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label for="id_phone" class="form-label">Phone Number</label>
+                                                <input type="text" name="phone" value="{{ teacher.phone|default:'' }}" class="form-control" id="id_phone" placeholder="e.g., 555-123-4567">
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="d-flex justify-content-end">
+                                            <button type="submit" class="btn btn-primary">
+                                                <i class="fas fa-save me-2"></i>Save Changes
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Notification Tab -->
+                        <div class="tab-pane fade {% if active_tab == 'notification' %}show active{% endif %}" id="notification" role="tabpanel" aria-labelledby="notification-tab">
+                            <form method="post">
+                                {% csrf_token %}
+                                <input type="hidden" name="form_type" value="notification">
+                                
+                                <h5 class="mb-4">Notification Preferences</h5>
+                                
+                                <div class="mb-3">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" name="email_notifications" id="id_email_notifications" checked>
+                                        <label class="form-check-label" for="id_email_notifications">
+                                            Email Notifications
+                                        </label>
+                                    </div>
+                                    <small class="text-muted">Receive email notifications for important updates</small>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" name="behavior_alerts" id="id_behavior_alerts" checked>
+                                        <label class="form-check-label" for="id_behavior_alerts">
+                                            Behavior Alerts
+                                        </label>
+                                    </div>
+                                    <small class="text-muted">Get alerts when student behavior scores change significantly</small>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" name="assignment_reminders" id="id_assignment_reminders" checked>
+                                        <label class="form-check-label" for="id_assignment_reminders">
+                                            Assignment Reminders
+                                        </label>
+                                    </div>
+                                    <small class="text-muted">Receive reminders about upcoming assignment deadlines</small>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" name="staff_announcements" id="id_staff_announcements" checked>
+                                        <label class="form-check-label" for="id_staff_announcements">
+                                            Staff Announcements
+                                        </label>
+                                    </div>
+                                    <small class="text-muted">Get notifications about staff meetings and announcements</small>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" name="parent_messages" id="id_parent_messages" checked>
+                                        <label class="form-check-label" for="id_parent_messages">
+                                            Parent Messages
+                                        </label>
+                                    </div>
+                                    <small class="text-muted">Be notified when parents send messages</small>
+                                </div>
+                                
+                                <div class="d-flex justify-content-end">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-save me-2"></i>Save Preferences
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                        
+                        <!-- Display Tab -->
+                        <div class="tab-pane fade {% if active_tab == 'display' %}show active{% endif %}" id="display" role="tabpanel" aria-labelledby="display-tab">
+                            <form method="post">
+                                {% csrf_token %}
+                                <input type="hidden" name="form_type" value="display">
+                                
+                                <h5 class="mb-4">Display Settings</h5>
+                                
+                                <div class="mb-4">
+                                    <label class="form-label d-block">Theme</label>
+                                    
+                                    <div class="theme-option">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="theme" id="theme_light" value="light" checked>
+                                            <label class="form-check-label" for="theme_light">
+                                                <div class="d-flex align-items-center">
+                                                    <div class="theme-preview theme-light"></div>
+                                                    Light Mode
+                                                </div>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="theme-option">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="theme" id="theme_dark" value="dark">
+                                            <label class="form-check-label" for="theme_dark">
+                                                <div class="d-flex align-items-center">
+                                                    <div class="theme-preview theme-dark"></div>
+                                                    Dark Mode
+                                                </div>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="theme-option">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="theme" id="theme_system" value="system">
+                                            <label class="form-check-label" for="theme_system">
+                                                <div class="d-flex align-items-center">
+                                                    <div class="theme-preview theme-system"></div>
+                                                    Use System Setting
+                                                </div>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-4">
+                                    <label class="form-label d-block">Dashboard Layout</label>
+                                    
+                                    <div class="layout-option">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="dashboard_layout" id="layout_default" value="default" checked>
+                                            <label class="form-check-label" for="layout_default">
+                                                <div class="d-flex align-items-center">
+                                                    <div class="layout-preview layout-default d-flex">
+                                                        <div class="layout-sidebar"></div>
+                                                        <div class="layout-content">
+                                                            <div class="layout-header"></div>
+                                                            <div class="layout-body">
+                                                                <div class="layout-box"></div>
+                                                                <div class="layout-box"></div>
+                                                                <div class="layout-box"></div>
+                                                                <div class="layout-box"></div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    Default Layout
+                                                </div>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="layout-option">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="dashboard_layout" id="layout_compact" value="compact">
+                                            <label class="form-check-label" for="layout_compact">
+                                                <div class="d-flex align-items-center">
+                                                    <div class="layout-preview layout-compact d-flex">
+                                                        <div class="layout-sidebar"></div>
+                                                        <div class="layout-content">
+                                                            <div class="layout-header"></div>
+                                                            <div class="layout-body">
+                                                                <div class="layout-box"></div>
+                                                                <div class="layout-box"></div>
+                                                                <div class="layout-box"></div>
+                                                                <div class="layout-box"></div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    Compact Layout
+                                                </div>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="layout-option">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="dashboard_layout" id="layout_expanded" value="expanded">
+                                            <label class="form-check-label" for="layout_expanded">
+                                                <div class="d-flex align-items-center">
+                                                    <div class="layout-preview layout-expanded d-flex">
+                                                        <div class="layout-sidebar"></div>
+                                                        <div class="layout-content">
+                                                            <div class="layout-header"></div>
+                                                            <div class="layout-body">
+                                                                <div class="layout-box"></div>
+                                                                <div class="layout-box"></div>
+                                                                <div class="layout-box"></div>
+                                                                <div class="layout-box"></div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    Expanded Layout
+                                                </div>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label class="form-label d-block">Dashboard Components</label>
+                                    
+                                    <div class="form-check form-switch mb-2">
+                                        <input class="form-check-input" type="checkbox" name="show_behavior_chart" id="id_show_behavior_chart" checked>
+                                        <label class="form-check-label" for="id_show_behavior_chart">
+                                            Show Behavior Chart
+                                        </label>
+                                    </div>
+                                    
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" name="show_calendar" id="id_show_calendar" checked>
+                                        <label class="form-check-label" for="id_show_calendar">
+                                            Show Calendar
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <div class="d-flex justify-content-end">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-save me-2"></i>Save Settings
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                        
+                        <!-- Password Tab -->
+                        <div class="tab-pane fade {% if active_tab == 'password' %}show active{% endif %}" id="password" role="tabpanel" aria-labelledby="password-tab">
+                            <form method="post">
+                                {% csrf_token %}
+                                <input type="hidden" name="form_type" value="password">
+                                
+                                <h5 class="mb-4">Change Password</h5>
+                                
+                                <div class="mb-3">
+                                    <label for="id_old_password" class="form-label">Current Password</label>
+                                    <input type="password" name="old_password" class="form-control" id="id_old_password" required>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="id_new_password1" class="form-label">New Password</label>
+                                    <input type="password" name="new_password1" class="form-control" id="id_new_password1" required>
+                                    <small class="text-muted">
+                                        Your password must contain at least 8 characters and can't be entirely numeric.
+                                    </small>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="id_new_password2" class="form-label">Confirm New Password</label>
+                                    <input type="password" name="new_password2" class="form-control" id="id_new_password2" required>
+                                </div>
+                                
+                                <div class="d-flex justify-content-end">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-key me-2"></i>Change Password
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="mt-5 py-4 bg-white border-top">
+        <div class="container text-center">
+            <p class="text-muted mb-0">© {% now "Y" %} LearningHub School Management System. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Auto-hide alerts after 5 seconds
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(function() {
+                const alerts = document.querySelectorAll('.alert');
+                alerts.forEach(function(alert) {
+                    const bsAlert = new bootstrap.Alert(alert);
+                    bsAlert.close();
+                });
+            }, 5000);
+            
+            // Profile picture upload
+            const profilePictureEdit = document.querySelector('.profile-picture-edit');
+            const profilePicture = document.querySelector('.profile-picture');
+            
+            if (profilePictureEdit) {
+                profilePictureEdit.addEventListener('click', function() {
+                    // Create a file input element
+                    const fileInput = document.createElement('input');
+                    fileInput.type = 'file';
+                    fileInput.accept = 'image/*';
+                    fileInput.style.display = 'none';
+                    
+                    // Append to body and trigger click
+                    document.body.appendChild(fileInput);
+                    fileInput.click();
+                    
+                    // Handle file selection
+                    fileInput.addEventListener('change', function() {
+                        if (fileInput.files && fileInput.files[0]) {
+                            const reader = new FileReader();
+                            
+                            reader.onload = function(e) {
+                                // Update the profile picture preview
+                                profilePicture.src = e.target.result;
+                                
+                                // In a real implementation, you would upload the file to the server here
+                                // For demo purposes, we'll just show a success message
+                                const alertContainer = document.querySelector('.alert-container');
+                                const alertHTML = `
+                                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                        Profile picture updated successfully!
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                    </div>
+                                `;
+                                alertContainer.innerHTML += alertHTML;
+                                
+                                // Auto-hide the alert after 5 seconds
+                                setTimeout(function() {
+                                    const alerts = document.querySelectorAll('.alert');
+                                    const lastAlert = alerts[alerts.length - 1];
+                                    const bsAlert = new bootstrap.Alert(lastAlert);
+                                    bsAlert.close();
+                                }, 5000);
+                            };
+                            
+                            reader.readAsDataURL(fileInput.files[0]);
+                        }
+                        
+                        // Remove the file input from the DOM
+                        document.body.removeChild(fileInput);
+                    });
+                });
+            }
+            
+            // Handle tab persistence
+            const tabLinks = document.querySelectorAll('.nav-link');
+            tabLinks.forEach(function(tabLink) {
+                tabLink.addEventListener('click', function() {
+                    const tabId = this.getAttribute('data-bs-target').replace('#', '');
+                    // Update URL with tab parameter
+                    const url = new URL(window.location.href);
+                    url.searchParams.set('tab', tabId);
+                    window.history.replaceState({}, '', url);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

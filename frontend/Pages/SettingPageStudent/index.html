@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Settings</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --success: #4cc9f0;
+            --info: #4895ef;
+            --warning: #f72585;
+            --danger: #e63946;
+            --light: #f8f9fa;
+            --dark: #212529;
+        }
+        
+        body {
+            background-color: #f5f7fb;
+            font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .navbar {
+            background-color: var(--primary) !important;
+            box-shadow: 0 2px 10px rgba(67, 97, 238, 0.3);
+        }
+        
+        .sidebar {
+            background-color: white;
+            height: 100vh;
+            position: fixed;
+            width: 250px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+            z-index: 100;
+            padding-top: 70px;
+            transition: all 0.3s;
+        }
+        
+        .sidebar-link {
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            color: #495057;
+            text-decoration: none;
+            transition: all 0.2s;
+            border-radius: 0 20px 20px 0;
+            margin-bottom: 5px;
+        }
+        
+        .sidebar-link:hover, .sidebar-link.active {
+            background-color: rgba(67, 97, 238, 0.1);
+            color: var(--primary);
+        }
+        
+        .sidebar-link i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+        
+        .main-content {
+            margin-left: 250px;
+            padding-top: 70px;
+            padding-bottom: 30px;
+            transition: all 0.3s;
+        }
+        
+        .dashboard-header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            color: white;
+            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.3);
+        }
+        
+        .card {
+            border-radius: 12px;
+            border: none;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s, box-shadow 0.3s;
+            margin-bottom: 25px;
+            height: 100%;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card-header {
+            background-color: white;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--dark);
+            padding: 15px 20px;
+            border-radius: 12px 12px 0 0 !important;
+        }
+        
+        .card-body {
+            padding: 20px;
+        }
+        
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        
+        .badge {
+            padding: 6px 10px;
+            border-radius: 30px;
+            font-weight: 500;
+        }
+        
+        .settings-header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            padding: 30px;
+            color: white;
+            margin-bottom: 30px;
+        }
+        
+        .nav-pills .nav-link {
+            color: #495057;
+            border-radius: 8px;
+            margin-bottom: 5px;
+            transition: all 0.2s;
+        }
+        
+        .nav-pills .nav-link.active {
+            background-color: rgba(67, 97, 238, 0.1);
+            color: var(--primary);
+        }
+        
+        .nav-pills .nav-link:hover {
+            background-color: rgba(67, 97, 238, 0.05);
+        }
+        
+        .settings-icon {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+        
+        .empty-field {
+            border-color: var(--warning);
+        }
+        
+        .required-field::after {
+            content: "*";
+            color: var(--warning);
+            margin-left: 4px;
+        }
+        
+        .empty-notice {
+            background-color: rgba(247, 37, 133, 0.1);
+            border-left: 4px solid var(--warning);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .profile-completion {
+            background-color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .progress {
+            height: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        
+        .progress-bar {
+            background-color: var(--primary);
+        }
+        
+        /* Mobile responsive */
+        @media (max-width: 991.98px) {
+            .sidebar {
+                width: 70px;
+                padding-top: 60px;
+            }
+            
+            .sidebar-link span {
+                display: none;
+            }
+            
+            .sidebar-link i {
+                margin-right: 0;
+                font-size: 1.2rem;
+            }
+            
+            .main-content {
+                margin-left: 70px;
+            }
+        }
+        
+        @media (max-width: 767.98px) {
+            .sidebar {
+                width: 0;
+                padding-top: 60px;
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold" href="#">
+                <i class="fas fa-graduation-cap me-2"></i> LearningHub
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="notificationDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-bell"></i>
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                3
+                            </span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationDropdown">
+                            <li><a class="dropdown-item" href="#">School Assembly Reminder</a></li>
+                            <li><a class="dropdown-item" href="#">New Study Material Available</a></li>
+                            <li><a class="dropdown-item" href="#">Parent-Teacher Meeting</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <img src="/placeholder.svg?height=40&width=40" class="avatar me-2" alt="Profile">
+                            <span>Alex Johnson</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i> Profile</a></li>
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i> Settings</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-sign-out-alt me-2"></i> Logout</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+
+        <a href="/" class="sidebar-link">
+            <i class="fas fa-user-graduate"></i>
+            <span>Profile</span>
+        </a>
+
+        <a href="/behavior-history" class="sidebar-link">
+            <i class="fas fa-award"></i>
+            <span>Behavior</span>
+        </a>
+        <a href="#" class="sidebar-link active">
+            <i class="fas fa-cog"></i>
+            <span>Settings</span>
+        </a>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="container-fluid px-4">
+            <!-- Dashboard Header -->
+            <div class="dashboard-header">
+                <h1 class="fw-bold">Account Settings</h1>
+                <p class="mb-0">Manage your profile and preferences</p>
+            </div>
+
+            <!-- Notification Messages -->
+            <div class="container-fluid mb-3 px-0">
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+                
+                {% if is_new_profile %}
+                <div class="empty-notice">
+                    <h5><i class="fas fa-info-circle me-2"></i>Welcome to your settings!</h5>
+                    <p class="mb-0">It looks like your profile information is incomplete. Please fill in your personal details and emergency contacts to complete your profile.</p>
+                </div>
+                
+                <!-- Profile Completion Progress -->
+                <div class="profile-completion">
+                    <h6>Profile Completion</h6>
+                    <div class="progress">
+                        <div class="progress-bar" role="progressbar" style="width: {{ profile_completion }}%" aria-valuenow="{{ profile_completion }}" aria-valuemin="0" aria-valuemax="100">{{ profile_completion }}%</div>
+                    </div>
+                    <small class="text-muted">Complete your profile to unlock all features</small>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="row">
+                <!-- Settings Navigation -->
+                <div class="col-md-3 mb-4">
+                    <div class="card">
+                        <div class="card-body p-0">
+                            <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                                <button class="nav-link active d-flex align-items-center p-3" id="profile-tab" data-bs-toggle="pill" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="true">
+                                    <i class="fas fa-user-circle settings-icon"></i> Profile
+                                    {% if not request.user.first_name or not request.user.last_name or not student.date_of_birth %}
+                                        <span class="ms-auto badge bg-warning">Incomplete</span>
+                                    {% endif %}
+                                </button>
+                                <button class="nav-link d-flex align-items-center p-3" id="account-tab" data-bs-toggle="pill" data-bs-target="#account" type="button" role="tab" aria-controls="account" aria-selected="false">
+                                    <i class="fas fa-shield-alt settings-icon"></i> Account
+                                </button>
+                                <button class="nav-link d-flex align-items-center p-3" id="notifications-tab" data-bs-toggle="pill" data-bs-target="#notifications" type="button" role="tab" aria-controls="notifications" aria-selected="false">
+                                    <i class="fas fa-bell settings-icon"></i> Notifications
+                                </button>
+                                <button class="nav-link d-flex align-items-center p-3" id="appearance-tab" data-bs-toggle="pill" data-bs-target="#appearance" type="button" role="tab" aria-controls="appearance" aria-selected="false">
+                                    <i class="fas fa-palette settings-icon"></i> Appearance
+                                </button>
+                                <button class="nav-link d-flex align-items-center p-3" id="privacy-tab" data-bs-toggle="pill" data-bs-target="#privacy" type="button" role="tab" aria-controls="privacy" aria-selected="false">
+                                    <i class="fas fa-eye-slash settings-icon"></i> Privacy
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Settings Content -->
+                <div class="col-md-9">
+                    <div class="tab-content" id="v-pills-tabContent">
+                        <!-- Profile Settings -->
+                        <div class="tab-pane fade show active" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                            <div class="card">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <span>Personal Information</span>
+                                    {% if not request.user.first_name or not request.user.last_name or not request.user.email or not student.date_of_birth %}
+                                        <span class="badge bg-warning">Incomplete</span>
+                                    {% endif %}
+                                </div>
+                                <div class="card-body">
+                                    <form action="{% url 'student_settings' %}" method="post">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="form_type" value="personal_info">
+                                        
+                                        <div class="row mb-3">
+                                            <div class="col-md-6">
+                                                <label for="firstName" class="form-label required-field">First Name</label>
+                                                <input type="text" class="form-control {% if not request.user.first_name %}empty-field{% endif %}" 
+                                                       id="firstName" name="firstName" value="{{ request.user.first_name }}" required
+                                                       placeholder="Enter your first name">
+                                                {% if not request.user.first_name %}
+                                                    <div class="form-text text-warning">Please enter your first name</div>
+                                                {% endif %}
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label for="lastName" class="form-label required-field">Last Name</label>
+                                                <input type="text" class="form-control {% if not request.user.last_name %}empty-field{% endif %}" 
+                                                       id="lastName" name="lastName" value="{{ request.user.last_name }}" required
+                                                       placeholder="Enter your last name">
+                                                {% if not request.user.last_name %}
+                                                    <div class="form-text text-warning">Please enter your last name</div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="email" class="form-label required-field">Email Address</label>
+                                            <input type="email" class="form-control {% if not request.user.email %}empty-field{% endif %}" 
+                                                   id="email" name="email" value="{{ request.user.email }}" required
+                                                   placeholder="Enter your email address">
+                                            {% if not request.user.email %}
+                                                <div class="form-text text-warning">Please enter your email address</div>
+                                            {% endif %}
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="dateOfBirth" class="form-label required-field">Date of Birth</label>
+                                            <input type="date" class="form-control {% if not student.date_of_birth %}empty-field{% endif %}" 
+                                                   id="dateOfBirth" name="dateOfBirth" value="{{ student.date_of_birth|date:'Y-m-d' }}" required>
+                                            {% if not student.date_of_birth %}
+                                                <div class="form-text text-warning">Please set your date of birth</div>
+                                            {% endif %}
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="address" class="form-label required-field">Address</label>
+                                            <textarea class="form-control {% if not student.address %}empty-field{% endif %}" 
+                                                      id="address" name="address" rows="2" required
+                                                      placeholder="Enter your home address">{{ student.address }}</textarea>
+                                            {% if not student.address %}
+                                                <div class="form-text text-warning">Please provide your address</div>
+                                            {% endif %}
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                                    </form>
+                                </div>
+                            </div>
+                            
+                            <div class="card mt-4">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <span>Emergency Contact</span>
+                                    {% if not student.emergency_contact_name or not student.emergency_phone %}
+                                        <span class="badge bg-warning">Incomplete</span>
+                                    {% endif %}
+                                </div>
+                                <div class="card-body">
+                                    <form action="{% url 'student_settings' %}" method="post">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="form_type" value="emergency_contact">
+                                        
+                                        <div class="row mb-3">
+                                            <div class="col-md-6">
+                                                <label for="emergencyName" class="form-label required-field">Primary Contact Name</label>
+                                                <input type="text" class="form-control {% if not student.emergency_contact_name %}empty-field{% endif %}" 
+                                                       id="emergencyName" name="emergencyName" value="{{ student.emergency_contact_name }}" required
+                                                       placeholder="Enter emergency contact name">
+                                                {% if not student.emergency_contact_name %}
+                                                    <div class="form-text text-warning">Please provide an emergency contact</div>
+                                                {% endif %}
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label for="emergencyRelation" class="form-label required-field">Relationship</label>
+                                                <input type="text" class="form-control {% if not student.emergency_contact_relation %}empty-field{% endif %}" 
+                                                       id="emergencyRelation" name="emergencyRelation" value="{{ student.emergency_contact_relation }}" required
+                                                       placeholder="E.g. Parent, Guardian, etc.">
+                                                {% if not student.emergency_contact_relation %}
+                                                    <div class="form-text text-warning">Please provide their relationship to you</div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="emergencyPhone" class="form-label required-field">Emergency Phone</label>
+                                            <input type="tel" class="form-control {% if not student.emergency_phone %}empty-field{% endif %}" 
+                                                   id="emergencyPhone" name="emergencyPhone" value="{{ student.emergency_phone }}" required
+                                                   placeholder="Enter emergency phone number">
+                                            {% if not student.emergency_phone %}
+                                                <div class="form-text text-warning">Please provide an emergency phone number</div>
+                                            {% endif %}
+                                        </div>
+                                        <hr class="my-4">
+                                        <div class="row mb-3">
+                                            <div class="col-md-6">
+                                                <label for="altName" class="form-label">Alternative Contact Name</label>
+                                                <input type="text" class="form-control" 
+                                                       id="altName" name="altName" value="{{ student.alt_contact_name }}"
+                                                       placeholder="Enter alternative contact name">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label for="altRelation" class="form-label">Relationship</label>
+                                                <input type="text" class="form-control" 
+                                                       id="altRelation" name="altRelation" value="{{ student.alt_contact_relation }}"
+                                                       placeholder="E.g. Parent, Sibling, etc.">
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="altPhone" class="form-label">Alternative Phone</label>
+                                            <input type="tel" class="form-control" 
+                                                   id="altPhone" name="altPhone" value="{{ student.alt_contact_phone }}"
+                                                   placeholder="Enter alternative phone number">
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">Save Emergency Contacts</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Account Settings -->
+                        <div class="tab-pane fade" id="account" role="tabpanel" aria-labelledby="account-tab">
+                            <div class="card">
+                                <div class="card-header">Account Security</div>
+                                <div class="card-body">
+                                    <form action="{% url 'student_settings' %}" method="post">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="form_type" value="change_password">
+                                        
+                                        <div class="mb-3">
+                                            <label for="currentPassword" class="form-label required-field">Current Password</label>
+                                            <input type="password" class="form-control" id="currentPassword" name="currentPassword" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="newPassword" class="form-label required-field">New Password</label>
+                                            <input type="password" class="form-control" id="newPassword" name="newPassword" required>
+                                            <div class="form-text">Password must be at least 8 characters long and include a mix of letters, numbers, and symbols.</div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="confirmPassword" class="form-label required-field">Confirm New Password</label>
+                                            <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">Change Password</button>
+                                    </form>
+                                </div>
+                            </div>
+                            
+                            <div class="card mt-4">
+                                <div class="card-header">Login Sessions</div>
+                                <div class="card-body">
+                                    <div class="mb-4">
+                                        <h6>Current Session</h6>
+                                        <div class="d-flex align-items-center mt-2">
+                                            <i class="fas fa-laptop me-3 text-primary"></i>
+                                            <div>
+                                                <div>{{ request.META.HTTP_USER_AGENT|default:"Unknown Device" }}</div>
+                                                <small class="text-muted">{{ request.META.REMOTE_ADDR|default:"Unknown Location" }} - Last active: Now</small>
+                                            </div>
+                                            <span class="badge bg-success ms-auto">Current</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <form action="{% url 'logout' %}" method="post">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-danger">Log Out</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Notifications Settings -->
+                        <div class="tab-pane fade" id="notifications" role="tabpanel" aria-labelledby="notifications-tab">
+                            <div class="card">
+                                <div class="card-header">Notification Preferences</div>
+                                <div class="card-body">
+                                    <form action="{% url 'student_settings' %}" method="post">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="form_type" value="notifications">
+                                        
+                                        <h6 class="mb-3">Email Notifications</h6>
+                                        <div class="form-check form-switch mb-3">
+                                            <input class="form-check-input" type="checkbox" id="emailAssignments" name="emailAssignments" {% if student.email_assignments %}checked{% endif %}>
+                                            <label class="form-check-label" for="emailAssignments">New Assignments</label>
+                                        </div>
+                                        <div class="form-check form-switch mb-3">
+                                            <input class="form-check-input" type="checkbox" id="emailGrades" name="emailGrades" {% if student.email_grades %}checked{% endif %}>
+                                            <label class="form-check-label" for="emailGrades">Grade Updates</label>
+                                        </div>
+                                        <div class="form-check form-switch mb-3">
+                                            <input class="form-check-input" type="checkbox" id="emailAnnouncements" name="emailAnnouncements" {% if student.email_announcements %}checked{% endif %}>
+                                            <label class="form-check-label" for="emailAnnouncements">School Announcements</label>
+                                        </div>
+                                        <div class="form-check form-switch mb-4">
+                                            <input class="form-check-input" type="checkbox" id="emailReminders" name="emailReminders" {% if student.email_reminders %}checked{% endif %}>
+                                            <label class="form-check-label" for="emailReminders">Assignment Reminders</label>
+                                        </div>
+                                        
+                                        <h6 class="mb-3">Push Notifications</h6>
+                                        <div class="form-check form-switch mb-3">
+                                            <input class="form-check-input" type="checkbox" id="pushAssignments" name="pushAssignments" {% if student.push_assignments %}checked{% endif %}>
+                                            <label class="form-check-label" for="pushAssignments">New Assignments</label>
+                                        </div>
+                                        <div class="form-check form-switch mb-3">
+                                            <input class="form-check-input" type="checkbox" id="pushGrades" name="pushGrades" {% if student.push_grades %}checked{% endif %}>
+                                            <label class="form-check-label" for="pushGrades">Grade Updates</label>
+                                        </div>
+                                        <div class="form-check form-switch mb-3">
+                                            <input class="form-check-input" type="checkbox" id="pushAnnouncements" name="pushAnnouncements" {% if student.push_announcements %}checked{% endif %}>
+                                            <label class="form-check-label" for="pushAnnouncements">School Announcements</label>
+                                        </div>
+                                        <div class="form-check form-switch mb-4">
+                                            <input class="form-check-input" type="checkbox" id="pushReminders" name="pushReminders" {% if student.push_reminders %}checked{% endif %}>
+                                            <label class="form-check-label" for="pushReminders">Assignment Reminders</label>
+                                        </div>
+                                        
+                                        <button type="submit" class="btn btn-primary">Save Preferences</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Appearance Settings -->
+                        <div class="tab-pane fade" id="appearance" role="tabpanel" aria-labelledby="appearance-tab">
+                            <div class="card">
+                                <div class="card-header">Display Settings</div>
+                                <div class="card-body">
+                                    <form action="{% url 'student_settings' %}" method="post">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="form_type" value="appearance">
+                                        
+                                        <div class="mb-4">
+                                            <label class="form-label d-block">Theme</label>
+                                            <div class="btn-group" role="group" aria-label="Theme selection">
+                                                <input type="radio" class="btn-check" name="themeOptions" id="lightTheme" value="light" {% if student.theme == 'light' or not student.theme %}checked{% endif %}>
+                                                <label class="btn btn-outline-primary" for="lightTheme">Light</label>
+                                                
+                                                <input type="radio" class="btn-check" name="themeOptions" id="darkTheme" value="dark" {% if student.theme == 'dark' %}checked{% endif %}>
+                                                <label class="btn btn-outline-primary" for="darkTheme">Dark</label>
+                                                
+                                                <input type="radio" class="btn-check" name="themeOptions" id="systemTheme" value="system" {% if student.theme == 'system' %}checked{% endif %}>
+                                                <label class="btn btn-outline-primary" for="systemTheme">System Default</label>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="mb-4">
+                                            <label class="form-label">Color Accent</label>
+                                            <div class="d-flex flex-wrap gap-2">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="colorAccent" id="blueAccent" value="blue" {% if student.color_accent == 'blue' or not student.color_accent %}checked{% endif %}>
+                                                    <label class="form-check-label" for="blueAccent">
+                                                        <span class="d-inline-block bg-primary rounded-circle" style="width: 20px; height: 20px;"></span>
+                                                        Blue
+                                                    </label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="colorAccent" id="greenAccent" value="green" {% if student.color_accent == 'green' %}checked{% endif %}>
+                                                    <label class="form-check-label" for="greenAccent">
+                                                        <span class="d-inline-block bg-success rounded-circle" style="width: 20px; height: 20px;"></span>
+                                                        Green
+                                                    </label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="colorAccent" id="purpleAccent" value="purple" {% if student.color_accent == 'purple' %}checked{% endif %}>
+                                                    <label class="form-check-label" for="purpleAccent">
+                                                        <span class="d-inline-block rounded-circle" style="width: 20px; height: 20px; background-color: #6f42c1;"></span>
+                                                        Purple
+                                                    </label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="colorAccent" id="orangeAccent" value="orange" {% if student.color_accent == 'orange' %}checked{% endif %}>
+                                                    <label class="form-check-label" for="orangeAccent">
+                                                        <span class="d-inline-block rounded-circle" style="width: 20px; height: 20px; background-color: #fd7e14;"></span>
+                                                        Orange
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="mb-4">
+                                            <label for="fontSize" class="form-label">Font Size</label>
+                                            <select class="form-select" id="fontSize" name="fontSize">
+                                                <option value="small" {% if student.font_size == 'small' %}selected{% endif %}>Small</option>
+                                                <option value="medium" {% if student.font_size == 'medium' or not student.font_size %}selected{% endif %}>Medium</option>
+                                                <option value="large" {% if student.font_size == 'large' %}selected{% endif %}>Large</option>
+                                            </select>
+                                        </div>
+                                        
+                                        <button type="submit" class="btn btn-primary">Save Display Settings</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Privacy Settings -->
+                        <div class="tab-pane fade" id="privacy" role="tabpanel" aria-labelledby="privacy-tab">
+                            <div class="card">
+                                <div class="card-header">Privacy Settings</div>
+                                <div class="card-body">
+                                    <form action="{% url 'student_settings' %}" method="post">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="form_type" value="privacy">
+                                        
+                                        <div class="mb-3">
+                                            <label class="form-label">Profile Visibility</label>
+                                            <select class="form-select" name="profileVisibility">
+                                                <option value="public" {% if student.profile_visibility == 'public' %}selected{% endif %}>Public (Visible to all school staff and students)</option>
+                                                <option value="staff" {% if student.profile_visibility == 'staff' or not student.profile_visibility %}selected{% endif %}>Staff Only (Visible only to teachers and staff)</option>
+                                                <option value="private" {% if student.profile_visibility == 'private' %}selected{% endif %}>Private (Minimal information shared)</option>
+                                            </select>
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" id="analytics" name="analytics" {% if student.analytics_allowed %}checked{% endif %}>
+                                                <label class="form-check-label" for="analytics">Allow analytics collection for improving platform experience</label>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" id="dataSharing" name="dataSharing" {% if student.data_sharing %}checked{% endif %}>
+                                                <label class="form-check-label" for="dataSharing">Allow sharing academic performance with parents/guardians</label>
+                                            </div>
+                                        </div>
+                                        
+                                        <button type="submit" class="btn btn-primary">Save Privacy Settings</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-light py-4 mt-auto">
+        <div class="container text-center">
+            <p class="text-muted mb-0">© 2025 LearningHub. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

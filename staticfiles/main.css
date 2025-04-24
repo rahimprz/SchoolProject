@@ -1,0 +1,120 @@
+  /* General Styling */
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+    margin: 0;
+    padding: 0;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #333;
+    padding: 15px;
+    color: white;
+}
+
+.header h1 {
+    margin: 0;
+}
+
+.toolbar {
+    background-color: #fff;
+    padding: 10px;
+    display: flex;
+    gap: 10px;
+    border-bottom: 1px solid #ddd;
+    justify-content: center;
+}
+
+.toolbar button, .toolbar select {
+    padding: 10px;
+    background-color: #4CAF50;
+    border: none;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.toolbar button:hover {
+    background-color: #45a049;
+}
+
+.classroom-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+    padding: 20px;
+    margin: 20px;
+}
+
+.seat {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 10px;
+    text-align: center;
+    cursor: grab;
+}
+
+.seat img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-bottom: 10px;
+}
+
+.sidebar {
+    margin: 20px;
+    padding: 20px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    position: fixed;
+    margin-top: -40%;
+    border-radius: 15px;
+    margin-left: 37%;
+    width: 30%;
+    z-index: 999;
+    border: 1px solid black;
+}
+
+#addStudentForm {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#addStudentForm input, #addStudentForm button {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+#addStudentForm button {
+    background-color: #4CAF50;
+    color: white;
+    cursor: pointer;
+}
+
+#addStudentForm button:hover {
+    background-color: #45a049;
+}
+
+.footer {
+    padding: 10px;
+    background-color: #333;
+    color: white;
+    text-align: center;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
+
+.student-buttons{
+    background: black;
+    color: white;
+    border: 1px solid black;
+    border-radius: 4px;
+    cursor: pointer;
+}

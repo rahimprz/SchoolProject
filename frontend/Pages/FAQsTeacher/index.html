@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StudentPlus - Teacher Dashboard FAQ</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f9fafb;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    .faq-container {
+      background: white;
+      padding: 35px;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      width: 800px;
+      max-width: 95%;
+      position: relative;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    h1 {
+      color: #1976d2;
+      margin-bottom: 5px;
+    }
+
+    h2 {
+      color: #1976d2;
+      margin: 30px 0 15px 0;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #f1f1f1;
+    }
+
+    p {
+      color: #666;
+      line-height: 1.5;
+    }
+
+    .faq-item {
+      margin-bottom: 25px;
+      border: 1px solid #eee;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .faq-question {
+      padding: 15px 20px;
+      background-color: #f9fafb;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 600;
+      color: #333;
+      transition: all 0.3s ease;
+    }
+
+    .faq-question:hover {
+      background-color: #f1f5f9;
+    }
+
+    .faq-question i {
+      transition: transform 0.3s ease;
+    }
+
+    .faq-answer {
+      padding: 0 20px;
+      max-height: 0;
+      overflow: hidden;
+      transition: all 0.3s ease;
+      background-color: white;
+    }
+
+    .faq-answer ul {
+      padding-left: 20px;
+      margin: 10px 0;
+    }
+
+    .faq-answer li {
+      margin-bottom: 8px;
+      color: #555;
+    }
+
+    .faq-item.active .faq-question {
+      background-color: #e8f0fe;
+      color: #1976d2;
+    }
+
+    .faq-item.active .faq-question i {
+      transform: rotate(180deg);
+    }
+
+    .faq-item.active .faq-answer {
+      padding: 20px;
+      max-height: 500px;
+    }
+
+    .back-btn {
+      display: inline-block;
+      margin-top: 30px;
+      background-color: #1976d2;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      text-decoration: none;
+      font-weight: 500;
+      transition: background-color 0.3s ease;
+    }
+
+    .back-btn:hover {
+      background-color: #0c4680;
+    }
+
+    .help-footer {
+      padding: 20px 0 0;
+      border-top: 1px solid #eee;
+      margin-top: 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 14px;
+      color: #777;
+    }
+
+    @media (max-width: 768px) {
+      .faq-container {
+        padding: 25px 20px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="faq-container">
+    <div class="header">
+      <h1>Teacher Dashboard FAQs</h1>
+      <p>Find answers to frequently asked questions about using the StudentPlus dashboard.</p>
+    </div>
+
+    <h2><i class="fas fa-question-circle"></i> General Usage</h2>
+
+    <div class="faq-item">
+      <div class="faq-question">
+        How do I navigate between different sections of the dashboard?
+        <i class="fas fa-chevron-down"></i>
+      </div>
+      <div class="faq-answer">
+        <p>Use the navigation links at the top of the page to switch between Seating Plan Dashboard, Behavior Analytics,
+          and Notifications.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question">
+        How do I view data for a specific class?
+        <i class="fas fa-chevron-down"></i>
+      </div>
+      <div class="faq-answer">
+        <p>Use the "Switch Class" dropdown in the subheader to select the class you want to view.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question">
+        Can I customise what information is displayed on my graphs?
+        <i class="fas fa-chevron-down"></i>
+      </div>
+      <div class="faq-answer">
+        <p>Yes, use the Advanced Filter section on the Behavior Analytics page to customise the data displayed. You can
+          filter by class, subject, student, behavior type, date range, etc.</p>
+      </div>
+    </div>
+
+    <h2><i class="fas fa-th"></i> Seating Plan Management</h2>
+
+    <div class="faq-item">
+      <div class="faq-question">
+        How do I create a new seating plan?
+        <i class="fas fa-chevron-down"></i>
+      </div>
+      <div class="faq-answer">
+        <p>Select your class from the dropdown, then drag and drop students from the "Unassigned Students" section to
+          the desired seats. Then save the plan when you are finished editing it.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question">
+        Can I rearrange students' seats?
+        <i class="fas fa-chevron-down"></i>
+      </div>
+      <div class="faq-answer">
+        <p>Yes, simply drag and drop students to different seats within the seating plan.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question">
+        How do I randomise the seating arrangements?
+        <i class="fas fa-chevron-down"></i>
+      </div>
+      <div class="faq-answer">
+        <p>Click the "Randomise Seating" button at the top of the seating plan page.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question">
+        Can I modify the number of seats in my classroom?
+        <i class="fas fa-chevron-down"></i>
+      </div>
+      <div class="faq-answer">
+        <p>Yes, modifying the classroom layout (adding or removing seats) requires assistance from technical support. We
+          recommend finalising your classroom layout before the term begins to avoid disruptions. Please contact support
+          if you need changes to your layout.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question">
+        What do different colours on student cards represent?
+        <i class="fas fa-chevron-down"></i>
+      </div>
+      <div class="faq-answer">
+        <ul>
+          <li>Green: Students in the top 25% by behavior points.</li>
+          <li>Orange: Students in the middle 50% by behavior points.</li>
+          <li>Red: Students in the bottom 25% by behavior points.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question">
+        Can I customise the behavior category names?
+        <i class="fas fa-chevron-down"></i>
+      </div>
+      <div class="faq-answer">
+        <p>Yes, in the Settings page under Behavior Management you can customise the category names based on your class
+          preferences and student age groups. Options include colours, animal themes, celebrities or fully custom names
+          of your choice.</p>
+      </div>
+    </div>
+
+    <h2><i class="fas fa-user-check"></i> Recording Student Behavior</h2>
+
+    <div class="faq-item">
+      <div class="faq-question">
+        How do I record positive behavior for a student?
+        <i class="fas fa-chevron-down"></i>
+      </div>
+      <div class="faq-answer">
+        <ul>
+          <li>Click the "Award" button on the student's card.</li>
+          <li>Select the number of points and the reason for the award.</li>
+          <li>Click "Submit".</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question">
+        How do I record behavior concerns?
+        <i class="fas fa-chevron-down"></i>
+      </div>
+      <div class="faq-answer">
+        <ul>
+          <li>Click the "Deduct" button on student's card.</li>
+          <li>Select the number of points to deduct and the reason.</li>
+          <li>Click "Submit".</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question">
+        Can I add custom reasons for behavior points?
+        <i class="fas fa-chevron-down"></i>
+      </div>
+      <div class="faq-answer">
+        <p>Yes, select "Other" from the reason dropdown and enter your reason in the field that appears.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question">
+        How can I view a student's information?
+        <i class="fas fa-chevron-down"></i>
+      </div>
+      <div class="faq-answer">
+        <p>Click "..." button on a student's card to view student information.</p>
+      </div>
+    </div>
+
+    <h2><i class="fas fa-chart-bar"></i> Data Analysis and Reports</h2>
+
+    <div class="faq-item">
+      <div class="faq-question">
+        How do I generate reports on student behavior?
+        <i class="fas fa-chevron-down"></i>
+      </div>
+      <div class="faq-answer">
+        <ul>
+          <li>Navigate to the Behavior Analytics section.</li>
+          <li>Use the filter to select the relevant data.</li>
+          <li>Click the "Print Report" button.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question">
+        What report formats are available?
+        <i class="fas fa-chevron-down"></i>
+      </div>
+      <div class="faq-answer">
+        <ul>
+          <li>PDF document</li>
+          <li>Excel Spreadsheet</li>
+          <li>Direct Print</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question">
+        How do I filter behavior data?
+        <i class="fas fa-chevron-down"></i>
+      </div>
+      <div class="faq-answer">
+        <ul>
+          <li>Use the Advanced Filters section to customise your view.</li>
+          <li>You can filter by class, subject, student, behavior type, data range, etc.</li>
+          <li>Click "Apply Filters" to update the view.</li>
+        </ul>
+      </div>
+    </div>
+
+    <h2><i class="fas fa-cog"></i> Settings</h2>
+
+    <div class="faq-item">
+      <div class="faq-question">
+        How do I update my personal information?
+        <i class="fas fa-chevron-down"></i>
+      </div>
+      <div class="faq-answer">
+        <ul>
+          <li>Navigate to Settings, then Account Settings.</li>
+          <li>Update your information in the relevant fields.</li>
+          <li>Click "Save Changes".</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question">
+        How do I change my password?
+        <i class="fas fa-chevron-down"></i>
+      </div>
+      <div class="faq-answer">
+        <ul>
+          <li>Go to Setting then Password & Security.</li>
+          <li>Enter your current password and your new password.</li>
+          <li>Click "Update Password".</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question">
+        How do I manage my active sessions?
+        <i class="fas fa-chevron-down"></i>
+      </div>
+      <div class="faq-answer">
+        <ul>
+          <li>Go to Settings then Password & Security.</li>
+          <li>Scroll down to the Active Sessions section.</li>
+          <li>Click "Sign Out" next to any session you want to terminate.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question">
+        How do I edit behaviour categories?
+        <i class="fas fa-chevron-down"></i>
+      </div>
+      <div class="faq-answer">
+        <ul>
+          <li>Go to settings then Behavior Management.</li>
+          <li>Edit existing categories, edit or delete.</li>
+          <li>Click "Save Changes" when finished.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question">
+        Can I set different behavior categories for different classes?
+        <i class="fas fa-chevron-down"></i>
+      </div>
+      <div class="faq-answer">
+        <p>Yes, use the "Apply to Class" dropdown to select which class the categories should apply to.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question">
+        How do I reset student behavior points?
+        <i class="fas fa-chevron-down"></i>
+      </div>
+      <div class="faq-answer">
+        <ul>
+          <li>You can enable automatic point resets at the end of each term by toggling "Auto-reset Points".</li>
+          <li>To manually reset points, use the "Reset to Default" button.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question">
+        Can students see their behavior categories?
+        <i class="fas fa-chevron-down"></i>
+      </div>
+      <div class="faq-answer">
+        <p>You can control that with the "Show Behavior Categories to Students" toggle.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question">
+        How do I enable dark mode?
+        <i class="fas fa-chevron-down"></i>
+      </div>
+      <div class="faq-answer">
+        <ul>
+          <li>Go to Settings then Appearance Settings.</li>
+          <li>Toggle the "Dark Mode" switch.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question">
+        How can I adjust the font size?
+        <i class="fas fa-chevron-down"></i>
+      </div>
+      <div class="faq-answer">
+        <ul>
+          <li>Go to Settings then Appearance Settings.</li>
+          <li>Select your preferred size from the "Front Size" dropdown.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question">
+        Are there accessibility options available?
+        <i class="fas fa-chevron-down"></i>
+      </div>
+      <div class="faq-answer">
+        <ul>
+          <li>Yes, go to Settings then Appearance Settings then Accessibility Settings.</li>
+          <li>Options include High Contrast Mode, Screen Reader Support, and Reduced Motion.</li>
+        </ul>
+      </div>
+    </div>
+
+    <a href="/teacher-settings" class="back-btn" onclick="window.close()"><i class="fas fa-arrow-left"></i> Back to Help Center</a>
+
+    <div class="help-footer">
+      <span>StudentPlus Support</span>
+      <span>Version 3.2</span>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const faqItems = document.querySelectorAll('.faq-item');
+
+      faqItems.forEach(item => {
+        const question = item.querySelector('.faq-question');
+
+        question.addEventListener('click', () => {
+          // Toggle current item
+          item.classList.toggle('active');
+        });
+      });
+    });
+  </script>
+</body>
+
+</html>

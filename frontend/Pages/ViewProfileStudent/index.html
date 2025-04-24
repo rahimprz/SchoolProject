@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --success: #4cc9f0;
+            --info: #4895ef;
+            --warning: #f72585;
+            --danger: #e63946;
+            --light: #f8f9fa;
+            --dark: #212529;
+        }
+        
+        body {
+            background-color: #f5f7fb;
+            font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .navbar {
+            background-color: var(--primary) !important;
+            box-shadow: 0 2px 10px rgba(67, 97, 238, 0.3);
+        }
+        
+        .sidebar {
+            background-color: white;
+            height: 100vh;
+            position: fixed;
+            width: 250px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+            z-index: 100;
+            padding-top: 70px;
+            transition: all 0.3s;
+        }
+        
+        .sidebar-link {
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            color: #495057;
+            text-decoration: none;
+            transition: all 0.2s;
+            border-radius: 0 20px 20px 0;
+            margin-bottom: 5px;
+        }
+        
+        .sidebar-link:hover, .sidebar-link.active {
+            background-color: rgba(67, 97, 238, 0.1);
+            color: var(--primary);
+        }
+        
+        .sidebar-link i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+        
+        .main-content {
+            margin-left: 250px;
+            padding-top: 70px;
+            padding-bottom: 30px;
+            transition: all 0.3s;
+        }
+        
+        .dashboard-header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            color: white;
+            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.3);
+        }
+        
+        .card {
+            border-radius: 12px;
+            border: none;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s, box-shadow 0.3s;
+            margin-bottom: 25px;
+            height: 100%;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card-header {
+            background-color: white;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--dark);
+            padding: 15px 20px;
+            border-radius: 12px 12px 0 0 !important;
+        }
+        
+        .card-body {
+            padding: 20px;
+        }
+        
+        .stats-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 25px;
+        }
+        
+        .stats-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 1.5rem;
+        }
+        
+        .stats-info h4 {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        
+        .stats-info p {
+            margin-bottom: 0;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+        
+        .upcoming-event {
+            background-color: white;
+            border-left: 4px solid var(--primary);
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 15px;
+            transition: transform 0.2s;
+        }
+        
+        .upcoming-event:hover {
+            transform: translateX(5px);
+        }
+        
+        .notification {
+            background-color: white;
+            border-left: 4px solid var(--success);
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 15px;
+            transition: transform 0.2s;
+        }
+        
+        .notification:hover {
+            transform: translateX(5px);
+        }
+        
+        .chart-container {
+            height: 280px;
+            position: relative;
+        }
+        
+        .progress-circular {
+            position: relative;
+            text-align: center;
+        }
+        
+        .progress-circular canvas {
+            width: 120px;
+            height: 120px;
+        }
+        
+        .progress-circular .progress-value {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+        
+        .timetable-item {
+            background-color: white;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-left: 4px solid var(--primary);
+            display: flex;
+            align-items: center;
+        }
+        
+        .timetable-time {
+            font-weight: 600;
+            color: var(--primary);
+            width: 100px;
+        }
+        
+        .timetable-subject {
+            flex-grow: 1;
+        }
+        
+        .timetable-subject h6 {
+            margin-bottom: 3px;
+        }
+        
+        .timetable-location {
+            width: 80px;
+            text-align: right;
+            color: #6c757d;
+        }
+        
+        .resource-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: white;
+            margin-bottom: 15px;
+            transition: all 0.2s;
+        }
+        
+        .resource-item:hover {
+            background-color: rgba(67, 97, 238, 0.05);
+            transform: translateX(5px);
+        }
+        
+        .resource-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background-color: rgba(67, 97, 238, 0.1);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 1.2rem;
+        }
+        
+        .resource-info {
+            flex-grow: 1;
+        }
+
+        /* Mobile responsive */
+        @media (max-width: 991.98px) {
+            .sidebar {
+                width: 70px;
+                padding-top: 60px;
+            }
+            
+            .sidebar-link span {
+                display: none;
+            }
+            
+            .sidebar-link i {
+                margin-right: 0;
+                font-size: 1.2rem;
+            }
+            
+            .main-content {
+                margin-left: 70px;
+            }
+        }
+        
+        @media (max-width: 767.98px) {
+            .sidebar {
+                width: 0;
+                padding-top: 60px;
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+        }
+        
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        
+        .badge {
+            padding: 6px 10px;
+            border-radius: 30px;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold" href="#">
+                <i class="fas fa-graduation-cap me-2"></i> LearningHub
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="notificationDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-bell"></i>
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                3
+                            </span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationDropdown">
+                            <li><a class="dropdown-item" href="#">School Assembly Reminder</a></li>
+                            <li><a class="dropdown-item" href="#">New Study Material Available</a></li>
+                            <li><a class="dropdown-item" href="#">Parent-Teacher Meeting</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <img src="/api/placeholder/40/40" class="avatar me-2" alt="Profile">
+                            <span>Alex Johnson</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i> Profile</a></li>
+                            <li><a class="dropdown-item" href="/student-settings"><i class="fas fa-cog me-2"></i> Settings</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-sign-out-alt me-2"></i> Logout</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+
+        <a href="#" class="sidebar-link active">
+            <i class="fas fa-user-graduate"></i>
+            <span>Profile</span>
+        </a>
+
+        <a href="/behavior-history" class="sidebar-link">
+            <i class="fas fa-award"></i>
+            <span>Behavior</span>
+        </a>
+        <a href="/student-settings" class="sidebar-link">
+            <i class="fas fa-cog"></i>
+            <span>Settings</span>
+        </a>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="container-fluid px-4">
+            <!-- Dashboard Header -->
+            <div class="dashboard-header">
+                <h1 class="fw-bold">Welcome back, Alex!</h1>
+                <p class="mb-0">Track your progress and manage your academic journey</p>
+            </div>
+
+            <!-- Quick Stats Row -->
+            <div class="row">
+                <div class="col-xl-3 col-md-6">
+                    <div class="stats-card">
+                        <div class="stats-icon bg-primary-light" style="background-color: rgba(67, 97, 238, 0.1); color: #4361ee;">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="stats-info">
+                            <h4>10.2</h4>
+                            <p>Average Grade</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-6">
+                    <div class="stats-card">
+                        <div class="stats-icon" style="background-color: rgba(76, 201, 240, 0.1); color: #4cc9f0;">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                        <div class="stats-info">
+                            <h4>94%</h4>
+                            <p>Attendance Rate</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-6">
+                    <div class="stats-card">
+                        <div class="stats-icon" style="background-color: rgba(247, 37, 133, 0.1); color: #f72585;">
+                            <i class="fas fa-tasks"></i>
+                        </div>
+                        <div class="stats-info">
+                            <h4>8</h4>
+                            <p>Pending Assignments</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-6">
+                    <div class="stats-card">
+                        <div class="stats-icon" style="background-color: rgba(72, 149, 239, 0.1); color: #4895ef;">
+                            <i class="fas fa-trophy"></i>
+                        </div>
+                        <div class="stats-info">
+                            <h4>12</h4>
+                            <p>Achievement Points</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <!-- Academic Performance Card -->
+                <div class="col-lg-8">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <div>Academic Performance</div>
+                            <div class="dropdown">
+                                <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                    This Semester
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="#">Last Semester</a></li>
+                                    <li><a class="dropdown-item" href="#">This Year</a></li>
+                                    <li><a class="dropdown-item" href="#">All Time</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-container">
+                                <canvas id="performanceChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Attendance Chart -->
+                <div class="col-lg-4">
+                    <div class="card">
+                        <div class="card-header">Attendance Overview</div>
+                        <div class="card-body">
+                            <div class="text-center mb-3">
+                                <div class="progress-circular mx-auto">
+                                    <canvas id="attendanceChart" width="120" height="120"></canvas>
+                                    <div class="progress-value">94%</div>
+                                </div>
+                                <div class="mt-3">
+                                    <h6 class="mb-1 text-center">Attendance Rate</h6>
+                                    <p class="text-muted small">Last updated: April 10, 2025</p>
+                                </div>
+                            </div>
+                            <div class="row text-center mt-4">
+                                <div class="col-4">
+                                    <h4 class="mb-1 text-success">158</h4>
+                                    <p class="text-muted small mb-0">Present</p>
+                                </div>
+                                <div class="col-4">
+                                    <h4 class="mb-1 text-warning">8</h4>
+                                    <p class="text-muted small mb-0">Late</p>
+                                </div>
+                                <div class="col-4">
+                                    <h4 class="mb-1 text-danger">2</h4>
+                                    <p class="text-muted small mb-0">Absent</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <!-- Today's Schedule -->
+                <div class="col-lg-8">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <div>Today's Schedule</div>
+                            <div>
+                                <span class="badge bg-primary">Thursday, April 10</span>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="timetable-item">
+                                <div class="timetable-time">8:30 - 9:30</div>
+                                <div class="timetable-subject">
+                                    <h6>Mathematics</h6>
+                                    <small class="text-muted">Mr. Thompson</small>
+                                </div>
+                                <div class="timetable-location">
+                                    <small><i class="fas fa-map-marker-alt me-1"></i> Room 101</small>
+                                </div>
+                            </div>
+                            <div class="timetable-item" style="border-left-color: #4cc9f0;">
+                                <div class="timetable-time">9:45 - 10:45</div>
+                                <div class="timetable-subject">
+                                    <h6>Science</h6>
+                                    <small class="text-muted">Ms. Johnson</small>
+                                </div>
+                                <div class="timetable-location">
+                                    <small><i class="fas fa-map-marker-alt me-1"></i> Lab 3</small>
+                                </div>
+                            </div>
+                            <div class="timetable-item" style="border-left-color: #f72585;">
+                                <div class="timetable-time">11:00 - 12:00</div>
+                                <div class="timetable-subject">
+                                    <h6>English</h6>
+                                    <small class="text-muted">Mrs. Williams</small>
+                                </div>
+                                <div class="timetable-location">
+                                    <small><i class="fas fa-map-marker-alt me-1"></i> Room 205</small>
+                                </div>
+                            </div>
+                            <div class="timetable-item" style="border-left-color: #4895ef;">
+                                <div class="timetable-time">12:00 - 1:00</div>
+                                <div class="timetable-subject">
+                                    <h6>Lunch Break</h6>
+                                    <small class="text-muted">Cafeteria</small>
+                                </div>
+                                <div class="timetable-location">
+                                    <small><i class="fas fa-utensils me-1"></i> Hall</small>
+                                </div>
+                            </div>
+                            <div class="timetable-item" style="border-left-color: #3f37c9;">
+                                <div class="timetable-time">1:15 - 2:15</div>
+                                <div class="timetable-subject">
+                                    <h6>History</h6>
+                                    <small class="text-muted">Mr. Davis</small>
+                                </div>
+                                <div class="timetable-location">
+                                    <small><i class="fas fa-map-marker-alt me-1"></i> Room 108</small>
+                                </div>
+                            </div>
+                            <div class="timetable-item" style="border-left-color: #e63946;">
+                                <div class="timetable-time">2:30 - 3:30</div>
+                                <div class="timetable-subject">
+                                    <h6>Art</h6>
+                                    <small class="text-muted">Ms. Roberts</small>
+                                </div>
+                                <div class="timetable-location">
+                                    <small><i class="fas fa-map-marker-alt me-1"></i> Art Studio</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4">
+                    <!-- Upcoming Assignments -->
+                    <div class="card mb-4">
+                        <div class="card-header">Upcoming Assignments</div>
+                        <div class="card-body">
+                            <div class="upcoming-event">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="badge bg-primary">Mathematics</span>
+                                    <small class="text-muted">Due in 5 days</small>
+                                </div>
+                                <h6 class="mb-1">Linear Equations</h6>
+                                <div class="progress mt-2" style="height: 5px;">
+                                    <div class="progress-bar bg-primary" role="progressbar" style="width: 75%;" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                                <div class="d-flex justify-content-between mt-1">
+                                    <small class="text-muted">Progress</small>
+                                    <small>75%</small>
+                                </div>
+                            </div>
+                            <div class="upcoming-event">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="badge" style="background-color: #4cc9f0;">Science</span>
+                                    <small class="text-muted">Due in 8 days</small>
+                                </div>
+                                <h6 class="mb-1">Lab Report</h6>
+                                <div class="progress mt-2" style="height: 5px;">
+                                    <div class="progress-bar" style="width: 40%; background-color: #4cc9f0;" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                                <div class="d-flex justify-content-between mt-1">
+                                    <small class="text-muted">Progress</small>
+                                    <small>40%</small>
+                                </div>
+                            </div>
+                            <div class="upcoming-event">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="badge" style="background-color: #f72585;">English</span>
+                                    <small class="text-muted">Due in 12 days</small>
+                                </div>
+                                <h6 class="mb-1">Book Analysis</h6>
+                                <div class="progress mt-2" style="height: 5px;">
+                                    <div class="progress-bar" style="width: 20%; background-color: #f72585;" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                                <div class="d-flex justify-content-between mt-1">
+                                    <small class="text-muted">Progress</small>
+                                    <small>20%</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Notifications -->
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <div>Notifications</div>
+                            <a href="#" class="text-decoration-none small">View All</a>
+                        </div>
+                        <div class="card-body">
+                            <div class="notification">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-bullhorn me-3" style="color: #4cc9f0; font-size: 1.2rem;"></i>
+                                    <div>
+                                        <h6 class="mb-1">School Assembly</h6>
+                                        <p class="mb-0 small text-muted">Today - 9:00 AM</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="notification">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-users me-3" style="color: #4895ef; font-size: 1.2rem;"></i>
+                                    <div>
+                                        <h6 class="mb-1">Parent-Teacher Meeting</h6>
+                                        <p class="mb-0 small text-muted">April 20, 2025 - 4:00 PM</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="notification">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-briefcase me-3" style="color: #f72585; font-size: 1.2rem;"></i>
+                                    <div>
+                                        <h6 class="mb-1">Career Counseling Session</h6>
+                                        <p class="mb-0 small text-muted">April 25, 2025 - 2:30 PM</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <!-- Resources -->
+                <div class="col-lg-8">
+                    <div class="card">
+                        <div class="card-header">Educational Resources</div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="resource-item">
+                                        <div class="resource-icon">
+                                            <i class="fas fa-calendar-alt"></i>
+                                        </div>
+                                        <div class="resource-info">
+                                            <h6 class="mb-1">School Calendar</h6>
+                                            <p class="mb-0 small text-muted">Academic year schedule and events</p>
+                                        </div>
+                                        <span class="badge bg-danger">New</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="resource-item">
+                                        <div class="resource-icon">
+                                            <i class="fas fa-book"></i>
+                                        </div>
+                                        <div class="resource-info">
+                                            <h6 class="mb-1">Library Access</h6>
+                                            <p class="mb-0 small text-muted">Online books and resources</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="resource-item">
+                                        <div class="resource-icon">
+                                            <i class="fas fa-file-alt"></i>
+                                        </div>
+                                        <div class="resource-info">
+                                            <h6 class="mb-1">Study Materials</h6>
+                                            <p class="mb-0 small text-muted">Subject guides and notes</p>
+                                        </div>
+                                        <span class="badge bg-primary">5</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="resource-item">
+                                        <div class="resource-icon">
+                                            <i class="fas fa-clipboard-list"></i>
+                                        </div>
+                                        <div class="resource-info">
+                                            <h6 class="mb-1">Past Exam Papers</h6>
+                                            <p class="mb-0 small text-muted">Practice tests and solutions</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Subject Performance -->
+                <div class="col-lg-4">
+                    <div class="card">
+                        <div class="card-header">Subject Performance</div>
+                        <div class="card-body">
+                            <div class="chart-container">
+                                <canvas id="subjectPerformanceChart"></canvas>
+								</div>
+                            <div class="mt-3">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <div class="d-flex align-items-center">
+                                        <span class="badge bg-primary me-2">&nbsp;</span>
+                                        <small>Mathematics</small>
+                                    </div>
+                                    <small class="fw-bold">92%</small>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <div class="d-flex align-items-center">
+                                        <span class="badge me-2" style="background-color: #4cc9f0;">&nbsp;</span>
+                                        <small>Science</small>
+                                    </div>
+                                    <small class="fw-bold">87%</small>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <div class="d-flex align-items-center">
+                                        <span class="badge me-2" style="background-color: #f72585;">&nbsp;</span>
+                                        <small>English</small>
+                                    </div>
+                                    <small class="fw-bold">78%</small>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <div class="d-flex align-items-center">
+                                        <span class="badge me-2" style="background-color: #4895ef;">&nbsp;</span>
+                                        <small>History</small>
+                                    </div>
+                                    <small class="fw-bold">85%</small>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="d-flex align-items-center">
+                                        <span class="badge me-2" style="background-color: #3f37c9;">&nbsp;</span>
+                                        <small>Art</small>
+                                    </div>
+                                    <small class="fw-bold">94%</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Learning Progress Row -->
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <div>Learning Progress</div>
+                            <div class="dropdown">
+                                <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                    This Month
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li><a class="dropdown-item" href="#">Last Month</a></li>
+                                    <li><a class="dropdown-item" href="#">Last Quarter</a></li>
+                                    <li><a class="dropdown-item" href="#">This Year</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-container">
+                                <canvas id="learningProgressChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="mt-5 py-4 bg-white border-top">
+        <div class="container text-center">
+            <p class="text-muted mb-0">© 2025 LearningHub School Management System. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Chart Initialization Scripts -->
+    <script>
+        // Performance Chart
+        const performanceCtx = document.getElementById('performanceChart').getContext('2d');
+        const performanceChart = new Chart(performanceCtx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'],
+                datasets: [
+                    {
+                        label: 'Your Grade',
+                        data: [8.5, 8.9, 9.2, 9.5, 9.8, 10.0, 10.2, 10.5, 10.8, 11.0],
+                        borderColor: '#4361ee',
+                        backgroundColor: 'rgba(67, 97, 238, 0.1)',
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: '#4361ee',
+                        pointBorderColor: '#fff',
+                        pointRadius: 4,
+                        pointHoverRadius: 6
+                    },
+                    {
+                        label: 'Class Average',
+                        data: [7.8, 8.0, 8.2, 8.4, 8.6, 8.8, 9.0, 9.2, 9.4, 9.6],
+                        borderColor: '#4cc9f0',
+                        borderDash: [5, 5],
+                        pointBackgroundColor: '#4cc9f0',
+                        pointBorderColor: '#fff',
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
+                        tension: 0.4,
+                        fill: false
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        align: 'end',
+                        labels: {
+                            boxWidth: 12,
+                            padding: 20
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                        padding: 12,
+                        usePointStyle: true
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        min: 7,
+                        max: 12,
+                        ticks: {
+                            stepSize: 1
+                        },
+                        grid: {
+                            borderDash: [2, 2]
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                },
+                elements: {
+                    line: {
+                        borderWidth: 2
+                    }
+                }
+            }
+        });
+
+        // Attendance Chart (Doughnut)
+        const attendanceCtx = document.getElementById('attendanceChart').getContext('2d');
+        const attendanceChart = new Chart(attendanceCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Present', 'Late', 'Absent'],
+                datasets: [{
+                    data: [94, 4, 2],
+                    backgroundColor: ['#4caf50', '#ffc107', '#f44336'],
+                    borderWidth: 0,
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                cutout: '75%',
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                        padding: 12,
+                        usePointStyle: true
+                    }
+                }
+            }
+        });
+
+        // Subject Performance Chart (Radar)
+        const subjectCtx = document.getElementById('subjectPerformanceChart').getContext('2d');
+        const subjectChart = new Chart(subjectCtx, {
+            type: 'radar',
+            data: {
+                labels: ['Mathematics', 'Science', 'English', 'History', 'Art'],
+                datasets: [{
+                    label: 'Current Performance',
+                    data: [92, 87, 78, 85, 94],
+                    backgroundColor: 'rgba(67, 97, 238, 0.2)',
+                    borderColor: '#4361ee',
+                    borderWidth: 2,
+                    pointBackgroundColor: '#4361ee',
+                    pointBorderColor: '#fff',
+                    pointHoverRadius: 6
+                },
+                {
+                    label: 'Last Semester',
+                    data: [85, 82, 74, 80, 90],
+                    backgroundColor: 'rgba(76, 201, 240, 0.2)',
+                    borderColor: '#4cc9f0',
+                    borderWidth: 2,
+                    pointBackgroundColor: '#4cc9f0',
+                    pointBorderColor: '#fff',
+                    pointHoverRadius: 6,
+                    borderDash: [5, 5]
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    r: {
+                        beginAtZero: true,
+                        max: 100,
+                        ticks: {
+                            display: false,
+                            stepSize: 20
+                        },
+                        pointLabels: {
+                            font: {
+                                size: 11
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        align: 'end',
+                        labels: {
+                            boxWidth: 12,
+                            padding: 20
+                        }
+                    }
+                }
+            }
+        });
+
+        // Learning Progress Chart (Bar)
+        const learningCtx = document.getElementById('learningProgressChart').getContext('2d');
+        const learningChart = new Chart(learningCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+                datasets: [
+                    {
+                        label: 'Assignments Completed',
+                        data: [5, 7, 4, 6],
+                        backgroundColor: '#4361ee',
+                        borderRadius: 6
+                    },
+                    {
+                        label: 'Hours Studied',
+                        data: [12, 15, 10, 14],
+                        backgroundColor: '#4cc9f0',
+                        borderRadius: 6
+                    },
+                    {
+                        label: 'Quiz Scores',
+                        data: [85, 90, 82, 88],
+                        backgroundColor: '#f72585',
+                        borderRadius: 6
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        align: 'end',
+                        labels: {
+                            boxWidth: 12,
+                            padding: 20
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            borderDash: [2, 2]
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                },
+                barPercentage: 0.6,
+                categoryPercentage: 0.7
+            }
+        });
+
+        // Mobile sidebar toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            const navbarToggler = document.querySelector('.navbar-toggler');
+            const sidebar = document.querySelector('.sidebar');
+            const mainContent = document.querySelector('.main-content');
+            
+            if (navbarToggler) {
+                navbarToggler.addEventListener('click', function() {
+                    if (window.innerWidth < 768) {
+                        if (sidebar.style.width === '250px') {
+                            sidebar.style.width = '0';
+                            mainContent.style.marginLeft = '0';
+                        } else {
+                            sidebar.style.width = '250px';
+                            mainContent.style.marginLeft = '0';
+                        }
+                    }
+                });
+            }
+            
+            // Handle window resize
+            window.addEventListener('resize', function() {
+                if (window.innerWidth >= 768) {
+                    sidebar.style.width = '';
+                    mainContent.style.marginLeft = '';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
