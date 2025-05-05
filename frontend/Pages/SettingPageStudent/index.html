@@ -246,7 +246,7 @@
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <img src="/placeholder.svg?height=40&width=40" class="avatar me-2" alt="Profile">
-                            <span>Alex Johnson</span>
+                           <span>{{ request.user.get_full_name|default:request.user.username }}</span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                             <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i> Profile</a></li>

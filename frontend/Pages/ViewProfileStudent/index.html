@@ -329,7 +329,7 @@
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <img src="/api/placeholder/40/40" class="avatar me-2" alt="Profile">
-                            <span>Alex Johnson</span>
+                            <span>{{ request.user.get_full_name|default:request.user.username }}</span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                             <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i> Profile</a></li>
@@ -366,7 +366,7 @@
         <div class="container-fluid px-4">
             <!-- Dashboard Header -->
             <div class="dashboard-header">
-                <h1 class="fw-bold">Welcome back, Alex!</h1>
+                <h1 class="fw-bold">Welcome back, {{ request.user.first_name|default:request.user.username }}!</h1>
                 <p class="mb-0">Track your progress and manage your academic journey</p>
             </div>
 
@@ -425,13 +425,14 @@
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <div>Academic Performance</div>
                             <div class="dropdown">
-                                <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" id="performanceTimeframeBtn">
                                     This Semester
                                 </button>
                                 <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="#">Last Semester</a></li>
-                                    <li><a class="dropdown-item" href="#">This Year</a></li>
-                                    <li><a class="dropdown-item" href="#">All Time</a></li>
+                                    <li><a class="dropdown-item performance-filter" href="#" data-timeframe="semester">This Semester</a></li>
+                                    <li><a class="dropdown-item performance-filter" href="#" data-timeframe="last-semester">Last Semester</a></li>
+                                    <li><a class="dropdown-item performance-filter" href="#" data-timeframe="year">This Year</a></li>
+                                    <li><a class="dropdown-item performance-filter" href="#" data-timeframe="all">All Time</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -484,7 +485,7 @@
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <div>Today's Schedule</div>
                             <div>
-                                <span class="badge bg-primary">Thursday, April 10</span>
+                                <span class="badge bg-primary">{{ current_date|default:"Thursday, April 10" }}</span>
                             </div>
                         </div>
                         <div class="card-body">
@@ -756,13 +757,14 @@
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <div>Learning Progress</div>
                             <div class="dropdown">
-                                <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" id="learningTimeframeBtn">
                                     This Month
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-end">
-                                    <li><a class="dropdown-item" href="#">Last Month</a></li>
-                                    <li><a class="dropdown-item" href="#">Last Quarter</a></li>
-                                    <li><a class="dropdown-item" href="#">This Year</a></li>
+                                    <li><a class="dropdown-item learning-filter" href="#" data-timeframe="month">This Month</a></li>
+                                    <li><a class="dropdown-item learning-filter" href="#" data-timeframe="last-month">Last Month</a></li>
+                                    <li><a class="dropdown-item learning-filter" href="#" data-timeframe="quarter">Last Quarter</a></li>
+                                    <li><a class="dropdown-item learning-filter" href="#" data-timeframe="year">This Year</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -789,82 +791,134 @@
     
     <!-- Chart Initialization Scripts -->
     <script>
+        // Performance Chart Data
+        const performanceData = {
+            semester: {
+                yourGrade: [8.5, 8.9, 9.2, 9.5, 9.8, 10.0, 10.2, 10.5, 10.8, 11.0],
+                classAverage: [7.8, 8.0, 8.2, 8.4, 8.6, 8.8, 9.0, 9.2, 9.4, 9.6]
+            },
+            'last-semester': {
+                yourGrade: [8.0, 8.2, 8.5, 8.7, 8.9, 9.1, 9.3, 9.5, 9.7, 9.9],
+                classAverage: [7.5, 7.7, 7.9, 8.1, 8.3, 8.5, 8.7, 8.9, 9.1, 9.3]
+            },
+            year: {
+                yourGrade: [7.5, 8.0, 8.5, 9.0, 9.5, 10.0, 10.2, 10.5, 10.8, 11.0],
+                classAverage: [7.0, 7.5, 8.0, 8.2, 8.5, 8.8, 9.0, 9.2, 9.4, 9.6]
+            },
+            all: {
+                yourGrade: [7.0, 7.5, 8.0, 8.5, 9.0, 9.5, 10.0, 10.5, 11.0, 11.5],
+                classAverage: [6.5, 7.0, 7.5, 8.0, 8.5, 9.0, 9.2, 9.4, 9.6, 9.8]
+            }
+        };
+
+        // Learning Progress Data
+        const learningData = {
+            month: {
+                labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+                assignments: [5, 7, 4, 6],
+                hours: [12, 15, 10, 14],
+                quizzes: [85, 90, 82, 88]
+            },
+            'last-month': {
+                labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+                assignments: [4, 6, 5, 7],
+                hours: [10, 13, 11, 15],
+                quizzes: [80, 85, 88, 83]
+            },
+            quarter: {
+                labels: ['Month 1', 'Month 2', 'Month 3'],
+                assignments: [18, 22, 25],
+                hours: [45, 52, 60],
+                quizzes: [82, 85, 88]
+            },
+            year: {
+                labels: ['Q1', 'Q2', 'Q3', 'Q4'],
+                assignments: [65, 72, 68, 75],
+                hours: [180, 195, 210, 225],
+                quizzes: [80, 83, 87, 90]
+            }
+        };
+
         // Performance Chart
         const performanceCtx = document.getElementById('performanceChart').getContext('2d');
-        const performanceChart = new Chart(performanceCtx, {
-            type: 'line',
-            data: {
-                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'],
-                datasets: [
-                    {
-                        label: 'Your Grade',
-                        data: [8.5, 8.9, 9.2, 9.5, 9.8, 10.0, 10.2, 10.5, 10.8, 11.0],
-                        borderColor: '#4361ee',
-                        backgroundColor: 'rgba(67, 97, 238, 0.1)',
-                        fill: true,
-                        tension: 0.4,
-                        pointBackgroundColor: '#4361ee',
-                        pointBorderColor: '#fff',
-                        pointRadius: 4,
-                        pointHoverRadius: 6
-                    },
-                    {
-                        label: 'Class Average',
-                        data: [7.8, 8.0, 8.2, 8.4, 8.6, 8.8, 9.0, 9.2, 9.4, 9.6],
-                        borderColor: '#4cc9f0',
-                        borderDash: [5, 5],
-                        pointBackgroundColor: '#4cc9f0',
-                        pointBorderColor: '#fff',
-                        pointRadius: 4,
-                        pointHoverRadius: 6,
-                        tension: 0.4,
-                        fill: false
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'top',
-                        align: 'end',
-                        labels: {
-                            boxWidth: 12,
-                            padding: 20
-                        }
-                    },
-                    tooltip: {
-                        backgroundColor: 'rgba(0, 0, 0, 0.7)',
-                        padding: 12,
-                        usePointStyle: true
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: false,
-                        min: 7,
-                        max: 12,
-                        ticks: {
-                            stepSize: 1
+        let performanceChart = createPerformanceChart(performanceCtx, 'semester');
+
+        function createPerformanceChart(ctx, timeframe) {
+            return new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'],
+                    datasets: [
+                        {
+                            label: 'Your Grade',
+                            data: performanceData[timeframe].yourGrade,
+                            borderColor: '#4361ee',
+                            backgroundColor: 'rgba(67, 97, 238, 0.1)',
+                            fill: true,
+                            tension: 0.4,
+                            pointBackgroundColor: '#4361ee',
+                            pointBorderColor: '#fff',
+                            pointRadius: 4,
+                            pointHoverRadius: 6
                         },
-                        grid: {
-                            borderDash: [2, 2]
+                        {
+                            label: 'Class Average',
+                            data: performanceData[timeframe].classAverage,
+                            borderColor: '#4cc9f0',
+                            borderDash: [5, 5],
+                            pointBackgroundColor: '#4cc9f0',
+                            pointBorderColor: '#fff',
+                            pointRadius: 4,
+                            pointHoverRadius: 6,
+                            tension: 0.4,
+                            fill: false
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            align: 'end',
+                            labels: {
+                                boxWidth: 12,
+                                padding: 20
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                            padding: 12,
+                            usePointStyle: true
                         }
                     },
-                    x: {
-                        grid: {
-                            display: false
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            min: 7,
+                            max: 12,
+                            ticks: {
+                                stepSize: 1
+                            },
+                            grid: {
+                                borderDash: [2, 2]
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
                         }
-                    }
-                },
-                elements: {
-                    line: {
-                        borderWidth: 2
+                    },
+                    elements: {
+                        line: {
+                            borderWidth: 2
+                        }
                     }
                 }
-            }
-        });
+            });
+        }
 
         // Attendance Chart (Doughnut)
         const attendanceCtx = document.getElementById('attendanceChart').getContext('2d');
@@ -957,60 +1011,89 @@
 
         // Learning Progress Chart (Bar)
         const learningCtx = document.getElementById('learningProgressChart').getContext('2d');
-        const learningChart = new Chart(learningCtx, {
-            type: 'bar',
-            data: {
-                labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
-                datasets: [
-                    {
-                        label: 'Assignments Completed',
-                        data: [5, 7, 4, 6],
-                        backgroundColor: '#4361ee',
-                        borderRadius: 6
-                    },
-                    {
-                        label: 'Hours Studied',
-                        data: [12, 15, 10, 14],
-                        backgroundColor: '#4cc9f0',
-                        borderRadius: 6
-                    },
-                    {
-                        label: 'Quiz Scores',
-                        data: [85, 90, 82, 88],
-                        backgroundColor: '#f72585',
-                        borderRadius: 6
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'top',
-                        align: 'end',
-                        labels: {
-                            boxWidth: 12,
-                            padding: 20
+        let learningChart = createLearningChart(learningCtx, 'month');
+
+        function createLearningChart(ctx, timeframe) {
+            return new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: learningData[timeframe].labels,
+                    datasets: [
+                        {
+                            label: 'Assignments Completed',
+                            data: learningData[timeframe].assignments,
+                            backgroundColor: '#4361ee',
+                            borderRadius: 6
+                        },
+                        {
+                            label: 'Hours Studied',
+                            data: learningData[timeframe].hours,
+                            backgroundColor: '#4cc9f0',
+                            borderRadius: 6
+                        },
+                        {
+                            label: 'Quiz Scores',
+                            data: learningData[timeframe].quizzes,
+                            backgroundColor: '#f72585',
+                            borderRadius: 6
                         }
-                    }
+                    ]
                 },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        grid: {
-                            borderDash: [2, 2]
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            align: 'end',
+                            labels: {
+                                boxWidth: 12,
+                                padding: 20
+                            }
                         }
                     },
-                    x: {
-                        grid: {
-                            display: false
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                borderDash: [2, 2]
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
                         }
-                    }
-                },
-                barPercentage: 0.6,
-                categoryPercentage: 0.7
-            }
+                    },
+                    barPercentage: 0.6,
+                    categoryPercentage: 0.7
+                }
+            });
+        }
+
+        // Filter event listeners
+        document.querySelectorAll('.performance-filter').forEach(item => {
+            item.addEventListener('click', event => {
+                event.preventDefault();
+                const timeframe = event.target.dataset.timeframe;
+                document.getElementById('performanceTimeframeBtn').textContent = event.target.textContent;
+                
+                // Destroy old chart and create new one with selected timeframe data
+                performanceChart.destroy();
+                performanceChart = createPerformanceChart(performanceCtx, timeframe);
+            });
+        });
+
+        document.querySelectorAll('.learning-filter').forEach(item => {
+            item.addEventListener('click', event => {
+                event.preventDefault();
+                const timeframe = event.target.dataset.timeframe;
+                document.getElementById('learningTimeframeBtn').textContent = event.target.textContent;
+                
+                // Destroy old chart and create new one with selected timeframe data
+                learningChart.destroy();
+                learningChart = createLearningChart(learningCtx, timeframe);
+            });
         });
 
         // Mobile sidebar toggle

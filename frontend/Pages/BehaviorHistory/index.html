@@ -408,13 +408,13 @@
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <img src="/placeholder.svg?height=40&width=40" class="avatar me-2" alt="Profile">
-                            <span>Alex Johnson</span>
+                            <span>{{ request.user.get_full_name|default:request.user.username }}</span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                             <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i> Profile</a></li>
-                            <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i> Settings</a></li>
+                            <li><a class="dropdown-item" href="/student-settings"><i class="fas fa-cog me-2"></i> Settings</a></li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="#"><i class="fas fa-sign-out-alt me-2"></i> Logout</a></li>
+                            <li><a class="dropdown-item" href="/logout"><i class="fas fa-sign-out-alt me-2"></i> Logout</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -440,135 +440,147 @@
         </a>
     </div>
 
-    <!-- Main Content -->
+     <!-- Main Content -->
     <div class="main-content">
-        <div class="container-fluid px-4">
+        <div class="container-fluid px-4 py-4">
             <!-- Dashboard Header -->
-            <div class="dashboard-header">
+            <div class="dashboard-header mb-4">
                 <h1 class="fw-bold">Behavior History</h1>
                 <p class="mb-0">Track your behavior records and achievements</p>
             </div>
 
             <!-- Quick Stats Row -->
-            <div class="row">
-                <div class="col-xl-3 col-md-6">
-                    <div class="stats-card">
-                        <div class="stats-icon bg-primary-light" style="background-color: rgba(67, 97, 238, 0.1); color: #4361ee;">
-                            <i class="fas fa-star"></i>
-                        </div>
-                        <div class="stats-info">
-                            <h4>{{ total_points }}</h4>
-                            <p>Total Points</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xl-3 col-md-6">
-                    <div class="stats-card">
-                        <div class="stats-icon" style="background-color: rgba(76, 201, 240, 0.1); color: #4cc9f0;">
-                            <i class="fas fa-thumbs-up"></i>
-                        </div>
-                        <div class="stats-info">
-                            <h4>{{ positive_count }}</h4>
-                            <p>Positive Records</p>
+            <div class="row mb-4">
+                <div class="col-xl-3 col-md-6 mb-3">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body d-flex align-items-center">
+                            <div class="flex-shrink-0 me-3 bg-primary bg-opacity-10 p-3 rounded">
+                                <i class="fas fa-star text-primary"></i>
+                            </div>
+                            <div>
+                                <h4 class="mb-0" id="total-points">{{ total_points }}</h4>
+                                <p class="text-muted mb-0">Total Points</p>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-xl-3 col-md-6">
-                    <div class="stats-card">
-                        <div class="stats-icon" style="background-color: rgba(247, 37, 133, 0.1); color: #f72585;">
-                            <i class="fas fa-thumbs-down"></i>
-                        </div>
-                        <div class="stats-info">
-                            <h4>{{ negative_count }}</h4>
-                            <p>Areas for Improvement</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xl-3 col-md-6">
-                    <div class="stats-card">
-                        <div class="stats-icon" style="background-color: rgba(72, 149, 239, 0.1); color: #4895ef;">
-                            <i class="fas fa-trophy"></i>
-                        </div>
-                        <div class="stats-info">
-                            <h4>{{ rank }}</h4>
-                            <p>Class Rank</p>
+                <div class="col-xl-3 col-md-6 mb-3">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body d-flex align-items-center">
+                            <div class="flex-shrink-0 me-3 bg-info bg-opacity-10 p-3 rounded">
+                                <i class="fas fa-thumbs-up text-info"></i>
+                            </div>
+                            <div>
+                                <h4 class="mb-0" id="positive-count">{{ positive_count }}</h4>
+                                <p class="text-muted mb-0">Positive Records</p>
+                            </div>
                         </div>
                     </div>
                 </div>
+                <div class="col-xl-3 col-md-6 mb-3">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body d-flex align-items-center">
+                            <div class="flex-shrink-0 me-3 bg-danger bg-opacity-10 p-3 rounded">
+                                <i class="fas fa-thumbs-down text-danger"></i>
+                            </div>
+                            <div>
+                                <h4 class="mb-0" id="negative-count">{{ negative_count }}</h4>
+                                <p class="text-muted mb-0">Areas for Improvement</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+             <div class="col-xl-3 col-md-6 mb-3">
+    <div class="card border-0 shadow-sm">
+        <div class="card-body d-flex align-items-center">
+            <div class="flex-shrink-0 me-3 bg-primary bg-opacity-10 p-3 rounded">
+                <i class="fas fa-chart-line text-primary"></i>
             </div>
+            <div>
+                <h4 class="mb-0">
+                    <span id="rank-percentile" class="badge rounded-pill" 
+                          style="font-size: 0.9rem; padding: 8px 12px;">
+                        {{ percentile_rank }}
+                    </span>
+                </h4>
+                <p class="text-muted mb-0">Class Performance</p>
+            </div>
+        </div>
+    </div>
+</div>
+
 
             <!-- Filter Section -->
-            <div class="filter-section">
-                <div class="filter-header">
-                    <div class="filter-title">Filter Records</div>
-                    <div class="filter-toggle" id="toggleFilters">
-                        <i class="fas fa-sliders-h"></i>
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
+                    <div class="fw-bold">Filter Records</div>
+                    <div class="btn btn-sm btn-outline-secondary" id="toggleFilters">
+                        <i class="fas fa-sliders-h me-1"></i>
                         <span>Show/Hide Filters</span>
                     </div>
                 </div>
-                <div class="filter-content" id="filterContent">
-                    <div class="filter-group">
-                        <label for="filter-subject">Subject</label>
-                        <select id="filter-subject">
-                            <option value="all">All Subjects</option>
-                            {% for subject in subjects %}
-                            <option value="{{ subject.id }}">{{ subject.name }}</option>
-                            {% endfor %}
-                        </select>
+                <div class="card-body" id="filterContent">
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <label for="filter-subject" class="form-label">Subject</label>
+                            <select id="filter-subject" class="form-select">
+                                <option value="all">All Subjects</option>
+                                {% for subject in subjects %}
+                                <option value="{{ subject.id }}">{{ subject.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="filter-behavior" class="form-label">Behavior Type</label>
+                            <select id="filter-behavior" class="form-select">
+                                <option value="all">All Types</option>
+                                <option value="positive">Positive Only</option>
+                                <option value="negative">Areas for Improvement Only</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="filter-date-from" class="form-label">Date From</label>
+                            <input type="date" id="filter-date-from" class="form-control">
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="filter-date-to" class="form-label">Date To</label>
+                            <input type="date" id="filter-date-to" class="form-control">
+                        </div>
                     </div>
-                    <div class="filter-group">
-                        <label for="filter-behavior">Behavior Type</label>
-                        <select id="filter-behavior">
-                            <option value="all">All Types</option>
-                            <option value="positive">Positive Only</option>
-                            <option value="negative">Areas for Improvement Only</option>
-                        </select>
-                    </div>
-                    <div class="filter-group">
-                        <label for="filter-date-from">Date From</label>
-                        <input type="date" id="filter-date-from">
-                    </div>
-                    <div class="filter-group">
-                        <label for="filter-date-to">Date To</label>
-                        <input type="date" id="filter-date-to">
-                    </div>
-                    <div class="filter-buttons">
-                        <button class="btn-reset" id="resetFilters">Reset</button>
-                        <button class="btn-apply" id="applyFilters">Apply Filters</button>
+                    <div class="d-flex justify-content-end">
+                        <button class="btn btn-outline-secondary me-2" id="resetFilters">Reset</button>
+                        <button class="btn btn-primary" id="applyFilters">Apply Filters</button>
                     </div>
                 </div>
             </div>
 
             <!-- Behavior Chart -->
-            <div class="row">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                            <div>Behavior Points Trend</div>
-                            <div class="dropdown">
-                                <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                                    This Semester
-                                </button>
-                                <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="#">Last Semester</a></li>
-                                    <li><a class="dropdown-item" href="#">This Year</a></li>
-                                    <li><a class="dropdown-item" href="#">All Time</a></li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <div class="chart-container">
-                                <canvas id="behaviorChart"></canvas>
-                            </div>
-                        </div>
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
+                    <div class="fw-bold">Behavior Points Trend</div>
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" id="timeRangeSelector">
+                            This Semester
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item time-range" href="#" data-range="semester">This Semester</a></li>
+                            <li><a class="dropdown-item time-range" href="#" data-range="last-semester">Last Semester</a></li>
+                            <li><a class="dropdown-item time-range" href="#" data-range="year">This Year</a></li>
+                            <li><a class="dropdown-item time-range" href="#" data-range="all">All Time</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div style="height: 300px;">
+                        <canvas id="behaviorChart"></canvas>
                     </div>
                 </div>
             </div>
 
             <!-- Behavior Records Table -->
-            <div class="card mt-4">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <div>Recent Behavior Records</div>
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
+                    <div class="fw-bold">Recent Behavior Records</div>
                     <div>
                         <button class="btn btn-sm btn-outline-primary" id="exportRecords">
                             <i class="fas fa-download me-1"></i> Export
@@ -577,8 +589,8 @@
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
-                        <table class="behavior-table">
-                            <thead>
+                        <table class="table table-hover mb-0" id="behavior-table">
+                            <thead class="bg-light">
                                 <tr>
                                     <th>Date</th>
                                     <th>Subject</th>
@@ -595,17 +607,17 @@
                                     <td>{{ behavior.subject.name }}</td>
                                     <td>
                                         {% if behavior.behavior_type == 'positive' %}
-                                        <span class="status-positive">
-                                            <i class="fas fa-thumbs-up status-icon"></i> Positive
+                                        <span class="badge bg-success">
+                                            <i class="fas fa-thumbs-up me-1"></i> Positive
                                         </span>
                                         {% else %}
-                                        <span class="status-negative">
-                                            <i class="fas fa-thumbs-down status-icon"></i> Improvement
+                                        <span class="badge bg-danger">
+                                            <i class="fas fa-thumbs-down me-1"></i> Improvement
                                         </span>
                                         {% endif %}
                                     </td>
                                     <td>{{ behavior.description }}</td>
-                                    <td class="{% if behavior.points > 0 %}text-green{% else %}text-red{% endif %}">
+                                    <td class="{% if behavior.points > 0 %}text-success{% else %}text-danger{% endif %}">
                                         {% if behavior.points > 0 %}+{% endif %}{{ behavior.points }}
                                     </td>
                                     <td>{{ behavior.recorded_by }}</td>
@@ -653,109 +665,782 @@
             </div>
         </div>
     </div>
-
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     
     <script>
-        // Toggle filters
-        const toggleFilters = document.getElementById('toggleFilters');
-        const filterContent = document.getElementById('filterContent');
-        
-        toggleFilters.addEventListener('click', function() {
-            filterContent.classList.toggle('d-none');
-        });
-        
-        // Reset filters
-        const resetFilters = document.getElementById('resetFilters');
-        
-        resetFilters.addEventListener('click', function() {
-            document.getElementById('filter-subject').value = 'all';
-            document.getElementById('filter-behavior').value = 'all';
-            document.getElementById('filter-date-from').value = '';
-            document.getElementById('filter-date-to').value = '';
-        });
-        
-        // Apply filters
-        const applyFilters = document.getElementById('applyFilters');
-        
-        applyFilters.addEventListener('click', function() {
-            // Get filter values
-            const subject = document.getElementById('filter-subject').value;
-            const behaviorType = document.getElementById('filter-behavior').value;
-            const dateFrom = document.getElementById('filter-date-from').value;
-            const dateTo = document.getElementById('filter-date-to').value;
-            
-            // Construct query string
-            let queryParams = [];
-            if (subject !== 'all') queryParams.push(`subject=${subject}`);
-            if (behaviorType !== 'all') queryParams.push(`type=${behaviorType}`);
-            if (dateFrom) queryParams.push(`from=${dateFrom}`);
-            if (dateTo) queryParams.push(`to=${dateTo}`);
-            
-            // Redirect with filters
-            if (queryParams.length > 0) {
-                window.location.href = `?${queryParams.join('&')}`;
-            } else {
-                window.location.href = window.location.pathname;
-            }
-        });
-        
-        // Initialize behavior chart
-        document.addEventListener('DOMContentLoaded', function() {
-            const ctx = document.getElementById('behaviorChart').getContext('2d');
-            
-            // Sample data - this would be replaced with actual data from the backend
-            const chartData = {
-                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-                datasets: [
-                    {
-                        label: 'Positive Points',
-                        data: [12, 15, 10, 18, 14, 20],
-                        backgroundColor: 'rgba(76, 201, 240, 0.2)',
-                        borderColor: 'rgba(76, 201, 240, 1)',
-                        borderWidth: 2,
-                        tension: 0.4
-                    },
-                    {
-                        label: 'Areas for Improvement',
-                        data: [5, 3, 6, 2, 4, 1],
-                        backgroundColor: 'rgba(247, 37, 133, 0.2)',
-                        borderColor: 'rgba(247, 37, 133, 1)',
-                        borderWidth: 2,
-                        tension: 0.4
-                    },
-                    {
-                        label: 'Net Points',
-                        data: [7, 12, 4, 16, 10, 19],
-                        backgroundColor: 'rgba(67, 97, 238, 0.2)',
-                        borderColor: 'rgba(67, 97, 238, 1)',
-                        borderWidth: 2,
-                        tension: 0.4
-                    }
-                ]
-            };
-            
-            new Chart(ctx, {
-                type: 'line',
-                data: chartData,
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
-                    }
-                }
-            });
-        });
-        
-        // Export records functionality
-        document.getElementById('exportRecords').addEventListener('click', function() {
-            alert('Your behavior records will be exported as a CSV file.');
-            // In a real implementation, this would trigger a download of the records
-        });
+	
+	function updateRankDisplay() {
+  const rankElement = document.getElementById('rank-percentile');
+  if (!rankElement) return;
+  
+  // Check if template variable is present
+  const rankText = rankElement.textContent.trim();
+  if (rankText === '{{ percentile_rank }}') {
+    // Mock data - replace with actual percentile calculation
+    const percentile = 'top'; // Options: 'top', 'middle', 'bottom'
+    
+    if (percentile === 'top') {
+      rankElement.textContent = 'Top 25%';
+      rankElement.classList.add('bg-success');
+    } else if (percentile === 'middle') {
+      rankElement.textContent = 'Middle 50%';
+      rankElement.classList.add('bg-warning');
+    } else {
+      rankElement.textContent = 'Bottom 25%';
+      rankElement.classList.add('bg-danger');
+    }
+  } else {
+    // If server provided a value, style it accordingly
+    if (rankText.toLowerCase().includes('top')) {
+      rankElement.classList.add('bg-success');
+    } else if (rankText.toLowerCase().includes('middle')) {
+      rankElement.classList.add('bg-warning');
+    } else if (rankText.toLowerCase().includes('bottom')) {
+      rankElement.classList.add('bg-danger');
+    }
+  }
+}
+	
+// Global variable for the chart
+let behaviorChart;
+
+// Initial chart data
+let currentChartData = {
+  labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+  positive: [12, 15, 10, 18, 14, 20],
+  negative: [5, 3, 6, 2, 4, 1],
+  net: [7, 12, 4, 16, 10, 19]
+};
+
+// Sample data for mock stats
+const mockStats = {
+  totalPoints: 89,
+  positiveCount: 32,
+  negativeCount: 12,
+  percentile: 'top' // 'top', 'middle', or 'bottom'
+};
+
+// On page load
+// Add the function call to the DOMContentLoaded event
+document.addEventListener('DOMContentLoaded', function() {
+  // Initialize page with mock data if needed
+  initializeMockData();
+  
+  // Initialize the chart
+  initBehaviorChart();
+  
+  // Setup filter functionality
+  setupFilters();
+  
+  // Setup time range functionality
+  setupTimeRangeFilters();
+  
+  // Update rank display
+  updateRankDisplay();
+  
+  // Setup export functionality
+  document.getElementById('exportRecords').addEventListener('click', exportRecords);
+});
+
+
+// Initialize mock data if template variables are not populated
+function initializeMockData() {
+  // Check if total points element has template variable
+  const totalPointsElement = document.getElementById('total-points');
+  if (totalPointsElement.textContent.trim() === '{{ total_points }}') {
+    totalPointsElement.textContent = mockStats.totalPoints;
+  }
+  
+  // Check if positive count element has template variable
+  const positiveCountElement = document.getElementById('positive-count');
+  if (positiveCountElement.textContent.trim() === '{{ positive_count }}') {
+    positiveCountElement.textContent = mockStats.positiveCount;
+  }
+  
+  // Check if negative count element has template variable
+  const negativeCountElement = document.getElementById('negative-count');
+  if (negativeCountElement.textContent.trim() === '{{ negative_count }}') {
+    negativeCountElement.textContent = mockStats.negativeCount;
+  }
+  
+  // Check if percentile rank element has template variable
+  const rankElement = document.getElementById('rank-percentile');
+  if (rankElement && rankElement.textContent.trim() === '{{ percentile_rank }}') {
+    // The updateRankDisplay function will handle this
+    updateRankDisplay();
+  }
+  
+  // Check if there are no behaviors in the table (empty state)
+  const behaviorTable = document.getElementById('behavior-table');
+  const tbody = behaviorTable.querySelector('tbody');
+  
+  if (tbody.children.length === 1 && tbody.children[0].querySelector('td').textContent.includes('No behavior records found')) {
+    // Add sample data
+    populateTableWithSampleData(tbody);
+  }
+}
+
+// Populate table with sample data
+function populateTableWithSampleData(tbody) {
+  // Clear existing content
+  tbody.innerHTML = '';
+  
+  // Sample behaviors data - this would match your Behavior model structure
+  const sampleBehaviors = [
+    {
+      recorded_at: 'Apr 25, 2025 14:30',
+      subject: { name: 'Mathematics' },
+      behavior_type: 'positive',
+      description: 'Excellent participation in class discussion',
+      points: 5,
+      recorded_by: 'Ms. Johnson'
+    },
+    {
+      recorded_at: 'Apr 23, 2025 10:15',
+      subject: { name: 'English' },
+      behavior_type: 'positive',
+      description: 'Well-written essay submission',
+      points: 8,
+      recorded_by: 'Mr. Smith'
+    },
+    {
+      recorded_at: 'Apr 22, 2025 13:45',
+      subject: { name: 'Science' },
+      behavior_type: 'negative',
+      description: 'Arrived late to class',
+      points: -2,
+      recorded_by: 'Dr. Williams'
+    },
+    {
+      recorded_at: 'Apr 20, 2025 09:30',
+      subject: { name: 'History' },
+      behavior_type: 'positive',
+      description: 'Helped another student understand the material',
+      points: 4,
+      recorded_by: 'Ms. Garcia'
+    },
+    {
+      recorded_at: 'Apr 18, 2025 11:20',
+      subject: { name: 'Physical Education' },
+      behavior_type: 'negative',
+      description: 'Did not bring proper equipment',
+      points: -1,
+      recorded_by: 'Coach Brown'
+    }
+  ];
+  
+  // Add each sample behavior to the table
+  sampleBehaviors.forEach(behavior => {
+    const row = document.createElement('tr');
+    
+    // Create table cells
+    const dateCell = document.createElement('td');
+    dateCell.textContent = behavior.recorded_at;
+    
+    const subjectCell = document.createElement('td');
+    subjectCell.textContent = behavior.subject.name;
+    
+    const typeCell = document.createElement('td');
+    const typeSpan = document.createElement('span');
+    typeSpan.className = `badge ${behavior.behavior_type === 'positive' ? 'bg-success' : 'bg-danger'}`;
+    
+    const typeIcon = document.createElement('i');
+    typeIcon.className = `fas fa-thumbs-${behavior.behavior_type === 'positive' ? 'up' : 'down'} me-1`;
+    
+    typeSpan.appendChild(typeIcon);
+    typeSpan.appendChild(document.createTextNode(behavior.behavior_type === 'positive' ? ' Positive' : ' Improvement'));
+    typeCell.appendChild(typeSpan);
+    
+    const descriptionCell = document.createElement('td');
+    descriptionCell.textContent = behavior.description;
+    
+    const pointsCell = document.createElement('td');
+    pointsCell.className = behavior.points > 0 ? 'text-success' : 'text-danger';
+    pointsCell.textContent = behavior.points > 0 ? `+${behavior.points}` : behavior.points;
+    
+    const recordedByCell = document.createElement('td');
+    recordedByCell.textContent = behavior.recorded_by;
+    
+    // Add cells to row
+    row.appendChild(dateCell);
+    row.appendChild(subjectCell);
+    row.appendChild(typeCell);
+    row.appendChild(descriptionCell);
+    row.appendChild(pointsCell);
+    row.appendChild(recordedByCell);
+    
+    // Add row to table body
+    tbody.appendChild(row);
+  });
+}
+
+// Initialize behavior chart
+// Initialize behavior chart
+function initBehaviorChart() {
+  const ctx = document.getElementById('behaviorChart').getContext('2d');
+  
+  behaviorChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: currentChartData.labels,
+      datasets: [
+        {
+          label: 'Positive Points',
+          data: currentChartData.positive,
+          backgroundColor: 'rgba(76, 201, 240, 0.2)',
+          borderColor: 'rgba(76, 201, 240, 1)',
+          borderWidth: 2,
+          tension: 0.4
+        },
+        {
+          label: 'Areas for Improvement',
+          data: currentChartData.negative,
+          backgroundColor: 'rgba(247, 37, 133, 0.2)',
+          borderColor: 'rgba(247, 37, 133, 1)',
+          borderWidth: 2,
+          tension: 0.4
+        },
+        {
+          label: 'Net Points',
+          data: currentChartData.net,
+          backgroundColor: 'rgba(67, 97, 238, 0.2)',
+          borderColor: 'rgba(67, 97, 238, 1)',
+          borderWidth: 2,
+          tension: 0.4
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        y: {
+          beginAtZero: true,
+          suggestedMax: Math.max(...currentChartData.positive, ...currentChartData.net) * 1.1
+        }
+      },
+      plugins: {
+        tooltip: {
+          mode: 'index',
+          intersect: false
+        },
+        legend: {
+          position: 'top',
+          labels: {
+            usePointStyle: true,
+            padding: 20
+          }
+        }
+      }
+    }
+  });
+}
+
+// Setup filter functionality
+function setupFilters() {
+  const toggleFilters = document.getElementById('toggleFilters');
+  const filterContent = document.getElementById('filterContent');
+  const resetFilters = document.getElementById('resetFilters');
+  const applyFilters = document.getElementById('applyFilters');
+  
+  // Make sure filter content is visible by default
+  filterContent.style.display = 'block';
+  
+  // Toggle filter visibility
+  toggleFilters.addEventListener('click', function() {
+    if (filterContent.style.display === 'none' || filterContent.style.display === '') {
+      filterContent.style.display = 'block';
+    } else {
+      filterContent.style.display = 'none';
+    }
+  });
+  
+  // Reset filters to default values
+  resetFilters.addEventListener('click', function() {
+    document.getElementById('filter-subject').value = 'all';
+    document.getElementById('filter-behavior').value = 'all';
+    document.getElementById('filter-date-from').value = '';
+    document.getElementById('filter-date-to').value = '';
+  });
+  
+  // Apply filters and fetch new data
+  applyFilters.addEventListener('click', function() {
+    // Get filter values
+    const subject = document.getElementById('filter-subject').value;
+    const behaviorType = document.getElementById('filter-behavior').value;
+    const dateFrom = document.getElementById('filter-date-from').value;
+    const dateTo = document.getElementById('filter-date-to').value;
+    
+    // Create URL parameters
+    const params = new URLSearchParams(window.location.search);
+    
+    // Update pagination parameter if exists
+    if (params.has('page')) {
+      // Reset to page 1 when filters change
+      params.set('page', '1');
+    }
+    
+    // Update or add parameters
+    if (subject !== 'all') {
+      params.set('subject', subject);
+    } else {
+      params.delete('subject');
+    }
+    
+    if (behaviorType !== 'all') {
+      params.set('type', behaviorType);
+    } else {
+      params.delete('type');
+    }
+    
+    if (dateFrom) {
+      params.set('from', dateFrom);
+    } else {
+      params.delete('from');
+    }
+    
+    if (dateTo) {
+      params.set('to', dateTo);
+    } else {
+      params.delete('to');
+    }
+    
+    // Update URL and reload page
+    const queryString = params.toString();
+    const newUrl = queryString ? 
+      `${window.location.pathname}?${queryString}` : 
+      window.location.pathname;
+    
+    // For demo purposes, we'll just update the chart and table without reloading
+    // In a production app, this would navigate to the new URL:
+    // window.location.href = newUrl;
+    
+    // Instead, for the demo, update the UI immediately:
+    updateChartData(document.getElementById('timeRangeSelector').textContent.toLowerCase().replace(' ', '-'));
+    filterTableData(subject, behaviorType, dateFrom, dateTo);
+  });
+  
+  // Check if there are filter parameters in URL and pre-select options
+  populateFiltersFromUrl();
+}
+
+// Filter table data based on selected filters (for demo purposes)
+function filterTableData(subject, behaviorType, dateFrom, dateTo) {
+  const table = document.getElementById('behavior-table');
+  const rows = table.querySelectorAll('tbody tr');
+  
+  rows.forEach(row => {
+    let showRow = true;
+    const cells = row.querySelectorAll('td');
+    
+    // Skip empty state row
+    if (cells.length < 3) return;
+    
+    // Check subject filter
+    if (subject !== 'all') {
+      const subjectName = cells[1].textContent.trim();
+      // In a real app, we'd match by ID, but for demo we'll match by name
+      if (subjectName !== getSubjectNameById(subject)) {
+        showRow = false;
+      }
+    }
+    
+    // Check behavior type filter
+    if (behaviorType !== 'all') {
+      const behaviorTypeCell = cells[2].textContent.trim().toLowerCase();
+      if ((behaviorType === 'positive' && !behaviorTypeCell.includes('positive')) ||
+          (behaviorType === 'negative' && !behaviorTypeCell.includes('improvement'))) {
+        showRow = false;
+      }
+    }
+    
+    // Check date range (simplified for demo)
+    if (dateFrom || dateTo) {
+      const dateCell = cells[0].textContent.trim();
+      const recordDate = new Date(dateCell);
+      
+      if (dateFrom) {
+        const fromDate = new Date(dateFrom);
+        if (recordDate < fromDate) {
+          showRow = false;
+        }
+      }
+      
+      if (dateTo) {
+        const toDate = new Date(dateTo);
+        // Set to end of day
+        toDate.setHours(23, 59, 59);
+        if (recordDate > toDate) {
+          showRow = false;
+        }
+      }
+    }
+    
+    // Show or hide row
+    row.style.display = showRow ? '' : 'none';
+  });
+  
+  // Update summary stats based on filtered data
+  updateStatistics();
+}
+
+// Helper function to get subject name by ID (simplified for demo)
+function getSubjectNameById(id) {
+  // Map of subject IDs to names (in a real app, this would come from the server)
+  const subjectMap = {
+    '1': 'Mathematics',
+    '2': 'English',
+    '3': 'Science',
+    '4': 'History',
+    '5': 'Physical Education'
+  };
+  
+  return subjectMap[id] || 'Unknown Subject';
+}
+
+// Update statistics based on filtered table data
+function updateStatistics() {
+  const table = document.getElementById('behavior-table');
+  const rows = table.querySelectorAll('tbody tr');
+  
+  let totalPoints = 0;
+  let positiveCount = 0;
+  let negativeCount = 0;
+  
+  rows.forEach(row => {
+    // Skip rows that are hidden by filters
+    if (row.style.display === 'none') return;
+    
+    const cells = row.querySelectorAll('td');
+    // Skip empty state row
+    if (cells.length < 3) return;
+    
+    // Get points from points cell
+    const pointsText = cells[4].textContent.trim();
+    const points = parseInt(pointsText);
+    
+    if (!isNaN(points)) {
+      totalPoints += points;
+      
+      if (points > 0) {
+        positiveCount++;
+      } else if (points < 0) {
+        negativeCount++;
+      }
+    }
+  });
+  
+  // Update stats in UI
+  document.getElementById('total-points').textContent = totalPoints;
+  document.getElementById('positive-count').textContent = positiveCount;
+  document.getElementById('negative-count').textContent = negativeCount;
+  // Rank doesn't change based on filters in this demo
+}
+
+// Populate filters from URL parameters
+function populateFiltersFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  
+  // Set subject filter
+  if (params.has('subject')) {
+    const subjectValue = params.get('subject');
+    const subjectElement = document.getElementById('filter-subject');
+    if (subjectElement) {
+      subjectElement.value = subjectValue;
+    }
+  }
+  
+  // Set behavior type filter
+  if (params.has('type')) {
+    const typeValue = params.get('type');
+    const typeElement = document.getElementById('filter-behavior');
+    if (typeElement) {
+      typeElement.value = typeValue;
+    }
+  }
+  
+  // Set date from filter
+  if (params.has('from')) {
+    const fromValue = params.get('from');
+    const fromElement = document.getElementById('filter-date-from');
+    if (fromElement) {
+      fromElement.value = fromValue;
+    }
+  }
+  
+  // Set date to filter
+  if (params.has('to')) {
+    const toValue = params.get('to');
+    const toElement = document.getElementById('filter-date-to');
+    if (toElement) {
+      toElement.value = toValue;
+    }
+  }
+  
+  // Apply the filters if any are set
+  if (params.has('subject') || params.has('type') || params.has('from') || params.has('to')) {
+    const subject = params.get('subject') || 'all';
+    const behaviorType = params.get('type') || 'all';
+    const dateFrom = params.get('from') || '';
+    const dateTo = params.get('to') || '';
+    
+    // For demo purposes, apply filters immediately
+    filterTableData(subject, behaviorType, dateFrom, dateTo);
+  }
+}
+
+// Setup time range filter functionality
+function setupTimeRangeFilters() {
+  const timeRangeLinks = document.querySelectorAll('.time-range');
+  const timeRangeSelector = document.getElementById('timeRangeSelector');
+  
+  timeRangeLinks.forEach(link => {
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
+      const range = this.getAttribute('data-range');
+      timeRangeSelector.textContent = this.textContent;
+      
+      // Update chart data based on selected time range
+      updateChartData(range);
+    });
+  });
+}
+
+// Update chart data based on selected time range and filters
+function updateChartData(range) {
+  // Get current filters
+  const subject = document.getElementById('filter-subject').value;
+  const behaviorType = document.getElementById('filter-behavior').value;
+  
+  // Different data sets based on range and filters
+  const dataSets = {
+    'semester': {
+      labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+      all: {
+        positive: [12, 15, 10, 18, 14, 20],
+        negative: [5, 3, 6, 2, 4, 1],
+        net: [7, 12, 4, 16, 10, 19]
+      },
+      // Subject-specific data should be a subset of "all" data
+      '1': { // Math subject
+        positive: [5, 7, 4, 9, 6, 8],
+        negative: [2, 1, 3, 0, 1, 0],
+        net: [3, 6, 1, 9, 5, 8]
+      },
+      '2': { // English subject
+        positive: [3, 4, 2, 5, 4, 6],
+        negative: [1, 1, 2, 1, 2, 0],
+        net: [2, 3, 0, 4, 2, 6]
+      },
+      '3': { // Science subject
+        positive: [2, 3, 1, 2, 2, 3],
+        negative: [1, 0, 1, 0, 0, 1],
+        net: [1, 3, 0, 2, 2, 2]
+      },
+      '4': { // History subject
+        positive: [1, 1, 2, 1, 1, 2],
+        negative: [0, 1, 0, 1, 1, 0],
+        net: [1, 0, 2, 0, 0, 2]
+      },
+      '5': { // PE subject
+        positive: [1, 0, 1, 1, 1, 1],
+        negative: [1, 0, 0, 0, 0, 0],
+        net: [0, 0, 1, 1, 1, 1]
+      }
+    },
+    'last-semester': {
+      labels: ['Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+      all: {
+        positive: [10, 13, 8, 15, 12, 18],
+        negative: [4, 2, 5, 1, 3, 0],
+        net: [6, 11, 3, 14, 9, 18]
+      },
+      // Subject-specific data for last semester
+      '1': { // Math subject
+        positive: [4, 5, 3, 6, 5, 7],
+        negative: [1, 0, 2, 0, 1, 0],
+        net: [3, 5, 1, 6, 4, 7]
+      },
+      '2': { // English subject
+        positive: [3, 4, 2, 4, 3, 5],
+        negative: [1, 1, 1, 0, 1, 0],
+        net: [2, 3, 1, 4, 2, 5]
+      },
+      '3': { // Science subject
+        positive: [2, 2, 1, 3, 2, 3],
+        negative: [1, 0, 1, 0, 0, 0],
+        net: [1, 2, 0, 3, 2, 3]
+      },
+      '4': { // History subject
+        positive: [1, 1, 1, 1, 1, 2],
+        negative: [1, 1, 1, 1, 1, 0],
+        net: [0, 0, 0, 0, 0, 2]
+      },
+      '5': { // PE subject
+        positive: [0, 1, 1, 1, 1, 1],
+        negative: [0, 0, 0, 0, 0, 0],
+        net: [0, 1, 1, 1, 1, 1]
+      }
+    },
+    'year': {
+      labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+      all: {
+        positive: [12, 15, 10, 18, 14, 20, 10, 13, 8, 15, 12, 18],
+        negative: [5, 3, 6, 2, 4, 1, 4, 2, 5, 1, 3, 0],
+        net: [7, 12, 4, 16, 10, 19, 6, 11, 3, 14, 9, 18]
+      },
+      // Subject-specific data for the whole year
+      '1': { // Math subject
+        positive: [5, 7, 4, 9, 6, 8, 4, 5, 3, 6, 5, 7],
+        negative: [2, 1, 3, 0, 1, 0, 1, 0, 2, 0, 1, 0],
+        net: [3, 6, 1, 9, 5, 8, 3, 5, 1, 6, 4, 7]
+      },
+      '2': { // English subject
+        positive: [3, 4, 2, 5, 4, 6, 3, 4, 2, 4, 3, 5],
+        negative: [1, 1, 2, 1, 2, 0, 1, 1, 1, 0, 1, 0],
+        net: [2, 3, 0, 4, 2, 6, 2, 3, 1, 4, 2, 5]
+      },
+      '3': { // Science subject
+        positive: [2, 3, 1, 2, 2, 3, 2, 2, 1, 3, 2, 3],
+        negative: [1, 0, 1, 0, 0, 1, 1, 0, 1, 0, 0, 0],
+        net: [1, 3, 0, 2, 2, 2, 1, 2, 0, 3, 2, 3]
+      },
+      '4': { // History subject
+        positive: [1, 1, 2, 1, 1, 2, 1, 1, 1, 1, 1, 2],
+        negative: [0, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0],
+        net: [1, 0, 2, 0, 0, 2, 0, 0, 0, 0, 0, 2]
+      },
+      '5': { // PE subject
+        positive: [1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1],
+        negative: [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        net: [0, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1]
+      }
+    },
+    'all': {
+      labels: ['2023-Q1', '2023-Q2', '2023-Q3', '2023-Q4', '2024-Q1', '2024-Q2', '2024-Q3', '2024-Q4', '2025-Q1', '2025-Q2'],
+      all: {
+        positive: [30, 35, 25, 40, 32, 45, 38, 42, 35, 48],
+        negative: [12, 8, 15, 5, 10, 3, 7, 4, 8, 2],
+        net: [18, 27, 10, 35, 22, 42, 31, 38, 27, 46]
+      },
+      // Subject-specific data for all time
+      '1': { // Math subject
+        positive: [12, 15, 10, 18, 14, 20, 15, 18, 14, 20],
+        negative: [5, 3, 6, 2, 4, 1, 3, 1, 3, 1],
+        net: [7, 12, 4, 16, 10, 19, 12, 17, 11, 19]
+      },
+      '2': { // English subject
+        positive: [8, 10, 6, 12, 9, 13, 10, 12, 9, 14],
+        negative: [3, 2, 4, 1, 3, 1, 2, 1, 2, 0],
+        net: [5, 8, 2, 11, 6, 12, 8, 11, 7, 14]
+      },
+      '3': { // Science subject
+        positive: [5, 6, 4, 6, 5, 7, 6, 7, 6, 8],
+        negative: [2, 1, 3, 1, 2, 0, 1, 1, 2, 1],
+        net: [3, 5, 1, 5, 3, 7, 5, 6, 4, 7]
+      },
+      '4': { // History subject
+        positive: [3, 3, 3, 2, 2, 3, 4, 3, 4, 4],
+        negative: [1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+        net: [2, 2, 2, 1, 1, 2, 3, 2, 3, 4]
+      },
+      '5': { // PE subject
+        positive: [2, 1, 2, 2, 2, 2, 3, 2, 2, 2],
+        negative: [1, 1, 1, 0, 0, 0, 0, 0, 0, 0],
+        net: [1, 0, 1, 2, 2, 2, 3, 2, 2, 2]
+      }
+    }
+  };
+  
+  // Get the appropriate data set based on range
+  const rangeData = dataSets[range] || dataSets['semester'];
+  
+  // Get data for the selected subject or all
+  const dataToUse = subject !== 'all' && rangeData[subject] ? 
+    rangeData[subject] : rangeData.all;
+  
+  // Update chart labels
+  behaviorChart.data.labels = rangeData.labels;
+  
+  // Update chart datasets
+  if (behaviorType === 'all' || behaviorType === 'positive') {
+    behaviorChart.data.datasets[0].data = dataToUse.positive;
+    behaviorChart.data.datasets[0].hidden = false;
+  } else {
+    // Hide positive dataset if only showing negative
+    behaviorChart.data.datasets[0].hidden = true;
+  }
+  
+  if (behaviorType === 'all' || behaviorType === 'negative') {
+    behaviorChart.data.datasets[1].data = dataToUse.negative;
+    behaviorChart.data.datasets[1].hidden = false;
+  } else {
+    // Hide negative dataset if only showing positive
+    behaviorChart.data.datasets[1].hidden = true;
+  }
+  
+  // Always show net dataset
+  behaviorChart.data.datasets[2].data = dataToUse.net;
+  
+  // Reset scales to ensure proper display
+  behaviorChart.options.scales.y = {
+    beginAtZero: true,
+    // Add some padding to the top of the chart
+    suggestedMax: Math.max(...dataToUse.positive, ...dataToUse.net) * 1.1
+  };
+  
+  // Update the chart
+  behaviorChart.update();
+}
+
+// Export records to CSV
+function exportRecords() {
+  const table = document.getElementById('behavior-table');
+  const rows = table.querySelectorAll('tbody tr');
+  let csvContent = "data:text/csv;charset=utf-8,";
+  
+  // Add header row
+  const headers = Array.from(table.querySelectorAll('thead th')).map(th => th.textContent.trim());
+  csvContent += headers.join(',') + '\n';
+  
+  // Add visible data rows
+  rows.forEach(row => {
+    // Skip hidden rows and empty state row
+    if (row.style.display === 'none' || row.querySelectorAll('td').length < 3) return;
+    
+    const cells = row.querySelectorAll('td');
+    const rowData = Array.from(cells).map(cell => {
+      // Clean up text content for CSV
+      let content = cell.textContent.trim();
+      
+      // Handle badges (positive/negative indicators)
+      if (cell.querySelector('.badge')) {
+        content = cell.querySelector('.badge').textContent.trim();
+      }
+      
+      // Escape commas and quotes
+      content = content.replace(/"/g, '""');
+      if (content.includes(',')) {
+        content = `"${content}"`;
+      }
+      
+      return content;
+    });
+    
+    csvContent += rowData.join(',') + '\n';
+  });
+  
+  // Create download link and trigger download
+  const encodedUri = encodeURI(csvContent);
+  const link = document.createElement('a');
+  link.setAttribute('href', encodedUri);
+  link.setAttribute('download', 'behavior_records.csv');
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
     </script>
 </body>
 </html>
+

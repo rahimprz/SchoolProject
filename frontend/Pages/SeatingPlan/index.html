@@ -126,14 +126,12 @@
         }
         
         /* Seating Plan Specific Styles */
-        .classroom-container {
-            background-color: white;
-            border-radius: 12px;
-            padding: 30px;
-            margin-bottom: 30px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-            position: relative;
-        }
+.classroom-container {
+    padding: 20px 15px;
+    margin-bottom: 25px;
+    overflow-x: hidden; /* Prevent horizontal scrolling */
+}
+
         
         .classroom-label {
             text-align: center;
@@ -155,18 +153,19 @@
             margin-top: 20px;
         }
 
-        .seat {
-            background-color: #e9ecef;
-            border-radius: 8px;
-            padding: 15px;
-            text-align: center;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-            transition: background-color 0.3s;
-            min-height: 150px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
+.seat {
+    width: 180px; /* Fixed width */
+    min-height: 120px; /* Minimum height */
+    background-color: #e9ecef;
+    border-radius: 8px;
+    padding: 12px;
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    transition: background-color 0.3s;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
 
         .seat:hover {
             background-color: #dee2e6;
@@ -177,13 +176,14 @@
             background-color: white;
         }
         
-        .student-card {
-            width: 100%;
-            height: 100%;
-            padding: 10px; /* Reduce padding to create more space */
-            display: flex;
-            flex-direction: column;
-        }
+.student-card {
+    width: 100%;
+    height: 100%;
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
 
         .student-card h4, .unassigned-student h4 {
             font-size: 0.9rem;
@@ -217,27 +217,26 @@
             color: var(--danger);
         }
         
-        .actions {
-            display: flex;
-            justify-content: space-between;
-            margin-top: auto;
-            flex-wrap: wrap; /* Allow buttons to wrap if needed */
-            gap: 4px; /* Add some gap between buttons */
-        }
+.actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: auto;
+    gap: 5px;
+}
 
-        .actions button {
-            padding: 3px 6px; /* Reduce padding to make buttons smaller */
-            font-size: 0.75rem; /* Reduce font size */
-            border-radius: 4px;
-            border: none;
-            cursor: pointer;
-            transition: all 0.2s;
-            flex: 1; /* Allow buttons to grow/shrink */
-            min-width: 0; /* Allow buttons to shrink below content size */
-            white-space: nowrap; /* Prevent text wrapping inside buttons */
-            overflow: hidden; /* Hide overflow text */
-            text-overflow: ellipsis; /* Add ellipsis for overflow text */
-        }
+.actions button {
+    padding: 4px 8px;
+    font-size: 0.75rem;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    flex: 1;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
         
 
         .btn-deduct {
@@ -273,12 +272,13 @@
             font-size: 0.9rem;
         }
         
-        .unassigned-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            margin-bottom: 30px;
-        }
+.unassigned-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
         
         .unassigned-title {
             font-weight: 600;
@@ -301,18 +301,19 @@
             gap: 10px;
         }
 
-        .unassigned-student {
-            width: 180px;
-            height: 150px;
-            background-color: white;
-            border-radius: 8px;
-            padding: 10px; /* Reduce padding to create more space */
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-            cursor: grab;
-            transition: all 0.2s;
-            display: flex;
-            flex-direction: column;
-        }
+.unassigned-student {
+    width: 180px; /* Match seat width */
+    min-height: 120px; /* Match seat height */
+    background-color: white;
+    border-radius: 8px;
+    padding: 12px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+    cursor: grab;
+    transition: all 0.2s;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
 
         .unassigned-student:active {
             cursor: grabbing;
@@ -452,21 +453,15 @@
             outline: none;
         }
         
-        .modal-buttons {
-            display: flex;
-            justify-content: flex-end;
-            margin-top: 20px;
-        }
+.modal-buttons {
+    gap: 10px;
+}
         
-        .modal-buttons button {
-            padding: 8px 15px;
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
+.modal-buttons button {
+    padding: 7px 12px;
+    font-size: 0.9rem;
+}
+
         
         .modal-buttons button:hover {
             background-color: var(--secondary);
@@ -621,11 +616,15 @@
                 margin-left: 70px;
             }
             
-            .classroom-row {
-                flex-wrap: wrap;
-                justify-content: center;
-                gap: 15px;
-            }
+.classroom-row {
+    display: flex;
+    flex-wrap: wrap; /* Allow wrapping */
+    justify-content: center; /* Center items */
+    gap: 15px; /* Consistent spacing */
+    margin-bottom: 20px;
+    padding: 0 10px; /* Add padding to prevent edge issues */
+}
+
             
             .seat {
                 width: 150px;
@@ -709,6 +708,182 @@
             background-color: rgba(67, 97, 238, 0.1) !important;
             border: 2px dashed var(--primary) !important;
         }
+		
+		
+	/* Enhanced responsive styling */
+@media (max-width: 1200px) {
+    .seat, .unassigned-student {
+        width: 160px;
+    }
+}
+
+@media (max-width: 991.98px) {
+    .sidebar {
+        width: 70px;
+        padding-top: 60px;
+    }
+    
+    .sidebar-link span {
+        display: none;
+    }
+    
+    .sidebar-link i {
+        margin-right: 0;
+        font-size: 1.2rem;
+    }
+    
+    .main-content {
+        margin-left: 70px;
+        padding: 70px 15px 30px; /* Adjust padding */
+    }
+    
+    .seat, .unassigned-student {
+        width: 140px;
+        min-height: 110px;
+    }
+    
+    .student-card h4, .unassigned-student h4 {
+        font-size: 0.85rem;
+    }
+    
+    .student-card p, .unassigned-student p {
+        font-size: 0.7rem;
+    }
+    
+    .actions button {
+        padding: 3px 6px;
+        font-size: 0.7rem;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .sidebar {
+        width: 0;
+        left: -70px; /* Move sidebar off-screen */
+    }
+    
+    .main-content {
+        margin-left: 0;
+        padding: 70px 10px 30px; /* Reduce padding */
+    }
+    
+    .seat, .unassigned-student {
+        width: 130px;
+        min-height: 100px;
+    }
+    
+    .dashboard-header {
+        padding: 20px;
+    }
+    
+    .card-body {
+        padding: 15px;
+    }
+    
+    .row {
+        margin-right: -10px;
+        margin-left: -10px;
+    }
+    
+    .col-md-6 {
+        padding-right: 10px;
+        padding-left: 10px;
+    }
+    
+    .subheader-actions {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .subheader-actions input, .subheader-actions button {
+        width: 100%;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .classroom-row {
+        justify-content: space-around;
+    }
+    
+    .seat, .unassigned-student {
+        width: 110px;
+        min-height: 90px;
+    }
+    
+    .student-card h4, .unassigned-student h4 {
+        font-size: 0.8rem;
+    }
+    
+    .student-card p, .unassigned-student p {
+        font-size: 0.65rem;
+    }
+    
+    .actions {
+        flex-wrap: wrap;
+    }
+    
+    .actions button {
+        padding: 2px 4px;
+        font-size: 0.65rem;
+        margin-bottom: 3px;
+    }
+    
+    .points {
+        font-size: 0.8rem;
+    }
+}	
+		
+		
+		
+		/* Fix header spacing */
+.dashboard-header h1 {
+    font-size: 1.8rem;
+    margin-bottom: 10px;
+}
+
+/* Add some spacing to buttons */
+.btn-deduct, .btn-award, .btn-more {
+    margin-bottom: 3px;
+}
+
+/* Add responsive sidebar toggle */
+.sidebar-toggle {
+    position: fixed;
+    top: 70px;
+    left: 10px;
+    z-index: 1030;
+    background: var(--primary);
+    color: white;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+@media (max-width: 767.98px) {
+    .sidebar-toggle {
+        display: flex;
+    }
+    
+    .sidebar.active {
+        left: 0;
+        width: 70px;
+    }
+}
+
+/* Fix empty seat styling */
+.empty-seat {
+    color: #adb5bd;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
     </style>
 </head>
 <body>
@@ -1313,7 +1488,18 @@ function updateStudentPoints(studentId, pointsChange, reason) {
     // Update points display
     const pointsElement = card.querySelector(".points");
     if (pointsElement) {
-      const currentPoints = Number.parseInt(pointsElement.textContent.replace(/[+-]/g, ""));
+      // Fix: Properly parse currentPoints with the sign
+      let currentPoints;
+      const pointsText = pointsElement.textContent.trim();
+      
+      // Check if it starts with + or - to handle it correctly
+      if (pointsText.startsWith('+')) {
+        currentPoints = Number.parseInt(pointsText.substring(1));
+      } else {
+        currentPoints = Number.parseInt(pointsText);
+      }
+      
+      // Calculate new points
       const newPoints = currentPoints + pointsChange;
       debugLog("Points update:", { currentPoints, pointsChange, newPoints });
 
@@ -2012,6 +2198,139 @@ document.addEventListener("DOMContentLoaded", function() {
     card.setAttribute("draggable", "true");
     card.addEventListener("dragstart", drag);
   });
+});
+
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Add sidebar toggle to the DOM
+    const sidebarToggle = document.createElement('div');
+    sidebarToggle.className = 'sidebar-toggle';
+    sidebarToggle.innerHTML = '<i class="fas fa-bars"></i>';
+    document.body.appendChild(sidebarToggle);
+    
+    // Toggle sidebar on click
+    sidebarToggle.addEventListener('click', function() {
+        const sidebar = document.querySelector('.sidebar');
+        sidebar.classList.toggle('active');
+    });
+    
+    // Adjust seating layout based on screen size
+    function adjustLayout() {
+        const screenWidth = window.innerWidth;
+        const seats = document.querySelectorAll('.seat');
+        const unassignedStudents = document.querySelectorAll('.unassigned-student');
+        
+        // Adjust font sizes and spacing based on screen width
+        if (screenWidth <= 575) {
+            seats.forEach(seat => {
+                const studentCard = seat.querySelector('.student-card');
+                if (studentCard) {
+                    const actions = studentCard.querySelector('.actions');
+                    if (actions && actions.children.length > 2) {
+                        // Hide "..." button on very small screens
+                        actions.children[2].style.display = 'none';
+                    }
+                }
+            });
+        } else {
+            seats.forEach(seat => {
+                const studentCard = seat.querySelector('.student-card');
+                if (studentCard) {
+                    const actions = studentCard.querySelector('.actions');
+                    if (actions && actions.children.length > 2) {
+                        actions.children[2].style.display = 'block';
+                    }
+                }
+            });
+        }
+    }
+    
+    // Run on load and resize
+    adjustLayout();
+    window.addEventListener('resize', adjustLayout);
+    
+    // Enhanced search functionality
+    const studentSearch = document.getElementById('studentSearch');
+    if (studentSearch) {
+        studentSearch.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            const studentCards = document.querySelectorAll('.student-card');
+            const unassignedStudents = document.querySelectorAll('.unassigned-student');
+            
+            // Search in assigned seats
+            studentCards.forEach(card => {
+                const studentName = card.querySelector('h4').textContent.toLowerCase();
+                const seat = card.closest('.seat');
+                
+                if (studentName.includes(searchTerm)) {
+                    seat.style.opacity = '1';
+                    // Highlight the found students
+                    if (searchTerm.length > 0) {
+                        seat.style.boxShadow = '0 0 10px rgba(67, 97, 238, 0.6)';
+                    } else {
+                        seat.style.boxShadow = '0 2px 5px rgba(0, 0, 0, 0.05)';
+                    }
+                } else {
+                    if (searchTerm.length > 0) {
+                        seat.style.opacity = '0.4';
+                    } else {
+                        seat.style.opacity = '1';
+                    }
+                    seat.style.boxShadow = '0 2px 5px rgba(0, 0, 0, 0.05)';
+                }
+            });
+            
+            // Search in unassigned students
+            unassignedStudents.forEach(student => {
+                const studentName = student.querySelector('h4').textContent.toLowerCase();
+                
+                if (studentName.includes(searchTerm)) {
+                    student.style.opacity = '1';
+                    if (searchTerm.length > 0) {
+                        student.style.boxShadow = '0 0 10px rgba(67, 97, 238, 0.6)';
+                    } else {
+                        student.style.boxShadow = '0 5px 15px rgba(0, 0, 0, 0.05)';
+                    }
+                } else {
+                    if (searchTerm.length > 0) {
+                        student.style.opacity = '0.4';
+                    } else {
+                        student.style.opacity = '1';
+                    }
+                    student.style.boxShadow = '0 5px 15px rgba(0, 0, 0, 0.05)';
+                }
+            });
+        });
+    }
+    
+    // Optimize drag and drop for mobile
+    function optimizeDragDrop() {
+        const seats = document.querySelectorAll('.seat');
+        const unassignedStudents = document.querySelectorAll('.unassigned-student');
+        
+        // For touch devices
+        if ('ontouchstart' in window) {
+            seats.forEach(seat => {
+                seat.addEventListener('touchstart', function(e) {
+                    // Handle touch events
+                    const studentCard = this.querySelector('.student-card');
+                    if (studentCard) {
+                        // Add logic for touch drag/drop
+                    }
+                });
+            });
+            
+            unassignedStudents.forEach(student => {
+                student.addEventListener('touchstart', function(e) {
+                    // Handle touch events for unassigned students
+                });
+            });
+        }
+    }
+    
+    // Run on load
+    optimizeDragDrop();
 });
     </script>
 </body>
